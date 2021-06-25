@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-title>Food</ion-title>
+</ion-header>
+
+
+<ion-content>
+  <ion-title>Food</ion-title>
+  <br>
+  <ion-item>
+    <ion-searchbar placeholder="Pretraga..."></ion-searchbar>
+    <ion-buttons *ngIf="itemSelected" slot="end">
+      <ion-fab-button color="success" size="small">
+        <ion-icon name="checkmark-sharp" (click)="onCheckMarkClick()"></ion-icon>
+      </ion-fab-button>
+    </ion-buttons>
+  </ion-item>
+  
+  <ion-list>
+    <app-food-item *ngFor="let item of items" [item]="item" [routerLink]="item.id"></app-food-item>
+  </ion-list>
+</ion-content>

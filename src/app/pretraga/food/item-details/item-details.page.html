@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar>
+ 
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pretraga/tabs/food"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title color="primary">Detalji namirnice</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="ion-text-center" *ngIf="isLoading">
+    <ion-spinner color="primary"></ion-spinner>
+  </div>
+
+  <ion-item color="primary" *ngIf="!isLoading">
+    <br>
+    <ion-card-title color="light">{{item.naziv}}</ion-card-title>
+    <br>
+  </ion-item>
+  <ion-grid *ngIf="!isLoading">
+    <ion-row>
+      <ion-col>
+        <ion-label>Unesi odgovarajucu kolicinu</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-align-items-start">
+      <ion-col >
+        <ion-item lines="none">
+          <ion-icon name="calculator-outline"></ion-icon>
+          <ion-input placeholder="Uneta kolicina" 
+            name="unetaKolicina" 
+            type="text" 
+            (input)="onChangeOfUnetaKolicina($event)"
+            [(ngModel)]="kolicina"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    </ion-grid>
+
+    <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" (click)="onDodaj()">
+      {{buttonText}}
+    </ion-button>
+
+    <ion-grid *ngIf="!isLoading">
+    <ion-row>
+      <ion-col>
+        <ion-card color="medium">
+          <ion-item color="medium" class="ion-text-center">
+            <ion-label>Calories</ion-label>
+          </ion-item>
+          <ion-card-content class="ion-text-center">
+            {{kalorija}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card color="medium">
+          <ion-item color="medium" class="ion-text-center">
+            <ion-label>Total Fat</ion-label>
+          </ion-item>
+          <ion-card-content class="ion-text-center">
+            {{masti}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card color="medium">
+          <ion-item color="medium" class="ion-text-center">
+            <ion-label>Total Carb</ion-label>
+          </ion-item>
+          <ion-card-content class="ion-text-center">
+            {{ugljenihHidrata}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card color="medium">
+          <ion-item color="medium" class="ion-text-center">
+            <ion-label>Protein</ion-label>
+          </ion-item>
+          <ion-card-content class="ion-text-center">
+            {{proteina}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
+
+</ion-content>
