@@ -1,11 +1,15 @@
 <ion-header>
 	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-menu-button color="primary"></ion-menu-button>
+		  </ion-buttons>
+
 	  <ion-title color="primary">Vas profil</ion-title>
 	</ion-toolbar>
   </ion-header>
   
 
-  <ion-content>
+  <ion-content padding-class="background" [fullscreen]="true">
 	<form profileForm="ngForm" > <!--ng subnmit je ovde bio-->
 	  <ion-grid>
 		<ion-row>
@@ -35,16 +39,7 @@
 			</ion-list>
 		  </ion-col>
 		</ion-row>
-		<ion-row class="ion-justify-content-center">
-		  <ion-col size-sm="6">
-  
-			
-  
-			<ion-button routerLink="/unos" type="submit" color="primary" expand="block" shape="round" size="small" *ngIf="!isLoading">
-				Izmeni
-			</ion-button>
-		  </ion-col>
-		</ion-row>
+		
 		
 	  </ion-grid>
 	</form>

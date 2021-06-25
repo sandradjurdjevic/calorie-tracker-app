@@ -27,6 +27,7 @@ export class ProfilPage implements OnInit {
 
    
     this.us.user.subscribe(resData => {
+      console.log(resData)
       this.user=resData;
       this.Ime=this.user.name;
       this.Prezime=this.user.lastname;
@@ -39,6 +40,12 @@ export class ProfilPage implements OnInit {
       this.Email=resData.email;*/
       
     //this.profileForm.setValue({name:ime});
+  }
+
+  ionWillEnter(){
+    
+
+    //this.us.getUsers();
   }
 
   

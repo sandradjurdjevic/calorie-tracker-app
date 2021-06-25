@@ -3,6 +3,7 @@ import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import { AlertController } from '@ionic/angular';
+import { UserService } from 'src/app/user.service';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,8 @@ import { AlertController } from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
   isLoading = false;
-  constructor(private authService: AuthService, private router: Router,private alertCtrl: AlertController) { }
+  constructor(private authService: AuthService, private router: Router,private alertCtrl: AlertController,
+    private us:UserService) { }
 
   ngOnInit() {
   }
@@ -23,6 +25,11 @@ export class LoginPage implements OnInit {
     if (logInForm.valid) {
       this.authService.logIn(logInForm.value).subscribe(resData => {
           this.isLoading = false;
+
+          this.us.getCurrentUser().subscribe((user)=>{
+            console.log('getUsers')
+          });
+
           this.router.navigateByUrl('/unos');
         },
         errRes => {
