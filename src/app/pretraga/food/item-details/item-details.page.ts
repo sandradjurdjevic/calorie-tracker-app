@@ -87,9 +87,10 @@ export class ItemDetailsPage implements OnInit {
     }
     if(this.pageService.getDodavanjeStavkiUReceptMode()){
       //izgenerisati random id
-      var recipeItem: RecipeFoodItem = {id:'55',idFood: this.item.id ,idRecept: this.pageService.getIdRecepta(), kolicina: this.kolicina};
+      //var recipeItem: RecipeFoodItem = {id:'',idFood: this.item.id ,idRecept: this.pageService.getIdRecepta(), kolicina: this.kolicina};
+      var recipeItem: RecipeFoodItem = {id:'',idFood: this.item.id ,idRecept: this.pageService.getIdRecepta(), kolicina: +this.kolicina};
   
-      this.receptItemService.addRecipeItem(recipeItem);
+      this.receptItemService.addRecipeItemUNiz(recipeItem);
 
       console.log('Stavka dodata u recept...');
       this.pageService.setItemSelected(true);

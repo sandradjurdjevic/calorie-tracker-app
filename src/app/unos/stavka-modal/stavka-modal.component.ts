@@ -15,7 +15,7 @@ export class StavkaModalComponent implements OnInit {
   @Input() naslov: string;
   @Input() naziv: string;
   @Input() stavka: Stavka;
-  kolicina: string; kalorija: string; masti: string; ugljenihHidrata: string; proteina:string;
+  kolicina: string; kalorija: number; masti: number; ugljenihHidrata: number; proteina:number;
 
   food: Food;
   recipe: Recipe;
@@ -23,12 +23,11 @@ export class StavkaModalComponent implements OnInit {
   constructor(private modalCtrl: ModalController, private foodService: FoodService, private recipeService:RecipesService) { }
 
   ngOnInit() {
-    console.log(this.stavka.kolicina);
     this.kolicina = this.stavka.kolicina.toString();
-    this.kalorija = this.stavka.kalorija.toString();
-    this.masti = this.stavka.masti.toString();
-    this.ugljenihHidrata = this.stavka.ugljenihHidrata.toString();
-    this.proteina = this.stavka.proteina.toString();
+    this.kalorija = this.stavka.kalorija;
+    this.masti = this.stavka.masti;
+    this.ugljenihHidrata = this.stavka.ugljenihHidrata;
+    this.proteina = this.stavka.proteina;
   }
 
   onClose() {
@@ -43,19 +42,21 @@ export class StavkaModalComponent implements OnInit {
         this.food = item;
       })
       if(this.kolicina.length > 0){
-        this.kalorija= (+this.kolicina*+this.food.kalorije100g).toString();
-        this.masti= (+this.kolicina*+this.food.masti100g).toString();
-        this.ugljenihHidrata= (+this.kolicina*+this.food.ugljeniHidrati100g).toString();
-        this.proteina= (+this.kolicina*+this.food.proteini100g).toString();
+        this.kalorija= (+this.kolicina*this.food.kalorije100g);
+        this.masti= (+this.kolicina*this.food.masti100g);
+        this.ugljenihHidrata= (+this.kolicina*this.food.ugljeniHidrati100g);
+        this.proteina= (+this.kolicina*this.food.proteini100g);
       }
     }
     if(this.stavka.idRecept != null){
-      this.recipe = this.recipeService.getRecipe(this.stavka.idRecept);
+      this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
+        this.recipe = recept;
+      })
       if(this.kolicina.length > 0){
-        this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija).toString();
-        this.masti= (+this.kolicina*+this.recipe.ukupnoMasti).toString();
-        this.ugljenihHidrata= (+this.kolicina*+this.recipe.ukupnoUgljenihHidrata).toString();
-        this.proteina= (+this.kolicina*+this.recipe.ukupnoProteina).toString();
+        this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija);
+        this.masti= (+this.kolicina*+this.recipe.ukupnoMasti);
+        this.ugljenihHidrata= (+this.kolicina*+this.recipe.ukupnoUgljenihHidrata);
+        this.proteina= (+this.kolicina*+this.recipe.ukupnoProteina);
       }
     }
     

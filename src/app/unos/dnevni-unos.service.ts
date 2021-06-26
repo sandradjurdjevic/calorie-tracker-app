@@ -44,7 +44,7 @@ export class DnevniUnosService {
   addDnevniUnos () {
     let generatedId;
     let newUnos: DnevniUnos = new DnevniUnos(
-      null, "0", formatDate(new Date(), 'yyyy-MM-dd', 'en-US'), null
+      null, 0, formatDate(new Date(), 'yyyy-MM-dd', 'en-US'), null
     );
     let fetchedUserId: string;
 
@@ -91,14 +91,28 @@ export class DnevniUnosService {
             );
           }
         }
-        
-        
-        
         return unosi;
         
       })
     );
 
+  }
+
+  editDnevniUnos(id:string, idKorisnik:string, datum:string, ukupnoKalorija:number){
+    return this.authService.token.pipe(
+      take(1),
+      switchMap((token) => {
+        return this.http.put(
+          `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/dnevniUnos/${id}.json?auth=${token}`,
+          {
+            datum,
+            idKorisnik,
+            ukupnoKalorija
+          }
+        );
+      })
+    );
+  
   }
 
   

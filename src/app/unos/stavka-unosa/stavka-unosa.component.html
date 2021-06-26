@@ -1,4 +1,7 @@
-<ion-item (click)="onStavkaClick()">
+<div class="ion-text-center" *ngIf="isLoading">
+  <ion-spinner color="primary"></ion-spinner>
+</div>
+<ion-item (click)="onStavkaClick()" *ngIf="!isLoading">
   <ion-title>{{naziv}}</ion-title>
   <ion-label>{{stavka.kalorija}}</ion-label>
 </ion-item>

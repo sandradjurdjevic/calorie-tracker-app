@@ -10,13 +10,16 @@
 </ion-header>
 
 <ion-content>
+  <div class="ion-text-center" *ngIf="isLoading">
+    <ion-spinner color="primary"></ion-spinner>
+  </div>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="onFabClick()">
     <ion-fab-button>
       <ion-icon name="add" routerLink="/pretraga" ></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <ion-grid>
+  <ion-grid *ngIf="!isLoading">
     <ion-row>
       <ion-col >
         <ion-list>
@@ -25,5 +28,10 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-item *ngIf="!isLoading">
+    <ion-label>Ukupno unetih kalorija</ion-label>
+    <ion-label>{{ukupnoKalorija}}</ion-label>
+  </ion-item>
 
 </ion-content>
