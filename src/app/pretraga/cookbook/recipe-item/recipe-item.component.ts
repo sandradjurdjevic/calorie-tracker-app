@@ -13,17 +13,18 @@ import { Recipe } from '../recipe.model';
 export class RecipeItemComponent implements OnInit {
   @Input() recipe: Recipe;
   kolicina: string;
-  recipeStavka: Recipe={id: '',naziv: '',opis:'',ukupnoKalorija:'',ukupnoMasti:'',ukupnoProteina:'',ukupnoUgljenihHidrata:'',idKorisnik:''};;
-
+  recipeStavka: Recipe;
+  
   constructor(private modalCtrl: ModalController, private nav: NavController,private stavkaService: StavkaService) { }
 
   ngOnInit() {}
+  
   onRecipeDetails(){
 
     this.modalCtrl
       .create({
         component: RecipeModalComponent,
-        componentProps: {naslov: 'Dodavanje u dnevni unos', recipe: this.recipe, buttonText: 'DODAJ'}
+        componentProps: {naslov: 'Dodavanje u dnevni unos', recipe: this.recipe, buttonText: 'DODAJ U DNEVNI UNOS'}
       })
       .then((modal) => {
         modal.present();
@@ -35,11 +36,13 @@ export class RecipeItemComponent implements OnInit {
         this.recipeStavka =  resultData.data.recipeData.recipe;
 
         
-        this.stavkaService.addStavka(+this.recipeStavka.ukupnoKalorija, +this.recipeStavka.ukupnoMasti,
-        +this.recipeStavka.ukupnoUgljenihHidrata,
-        +this.recipeStavka.ukupnoProteina, +this.kolicina,
-        null, this.recipe.id);
-        console.log('Stavka dodata u dnevni unos...');
+        this.stavkaService.addStavka(this.recipeStavka.ukupnoKalorija, this.recipeStavka.ukupnoMasti,
+        this.recipeStavka.ukupnoUgljenihHidrata,
+        this.recipeStavka.ukupnoProteina, +this.kolicina,
+        null, this.recipe.id).subscribe((stavke) => {
+          console.log('Stavka dodata u dnevni unos...');
+        });
+        
         this.nav.navigateForward('/unos');
       }
     });

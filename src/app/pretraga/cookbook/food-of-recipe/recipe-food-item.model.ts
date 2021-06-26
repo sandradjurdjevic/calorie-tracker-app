@@ -1,6 +1,6 @@
-export interface RecipeFoodItem {
-    id: string;
-    idFood: string;
-    kolicina: string;
-    idRecept: string;
+export class RecipeFoodItem {
+    constructor(public id: string,
+        public idFood: string,
+        public kolicina: number,
+        public idRecept: string){}
 }

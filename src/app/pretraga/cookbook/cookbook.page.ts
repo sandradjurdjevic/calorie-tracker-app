@@ -12,26 +12,32 @@ import { RecipesService } from './recipe.service';
 export class CookbookPage implements OnInit {
   recipes: Recipe[];
 
+  isLoading = false;
   constructor(private recipeService: RecipesService, private modalCtrl: ModalController,private pageService: PageModeService, private nav: NavController) {
     
    }
 
   ngOnInit() {
+    this.recipeService.recipes.subscribe((recipes)=>{
+      this.recipes = recipes;
+    })
   }
 
   ionViewWillEnter(){
+    this.isLoading = true;
+    console.log('doso ovde');
     this.pageService.setDodavanjeStavkeUnosaFoodMode(false);
-    //pretraziti recepte prema id korisnika
-    this.recipes = this.recipeService.recipes;
+    this.recipeService.getRecipes().subscribe((recipes)=>{
+      console.log('get recipes');
+      this.isLoading=false;
+    });
   }
 
   onAddRecipeClick(){
-    //izgenerisati id za novi recept, ubaciti odmah id korisnika
-    var newRecipe: Recipe = {id: '5',opis:'',idKorisnik:'',naziv:'',ukupnoKalorija:'',ukupnoMasti:'',ukupnoProteina:'',ukupnoUgljenihHidrata:''};
-    this.recipeService.addRecipe(newRecipe);
-    this.pageService.setIdRecepta(newRecipe.id); //pamcenje spoljnog kljuca zbog prelaska na stranicu za dodavanje sastojaka
     this.pageService.setDodavanjeNovogRecepta(true);
-    this.nav.navigateForward(`/pretraga/tabs/cookbook/${newRecipe.id}`);
+    this.pageService.setIzmenaRecepta(false);
+    this.pageService.setBrisanjeRecepta(false);
+    this.nav.navigateForward(`/pretraga/tabs/cookbook/0`);
   }
 
 }
