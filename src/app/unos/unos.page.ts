@@ -81,6 +81,10 @@ export class UnosPage implements OnInit {
     this.isLoading = true;
     if(this.unos!=null){
       this.stavkaService.getStavke(this.unos.id).subscribe((stavke) => {
+        if(stavke==null){
+          console.log('korisnik nema stavki stavke');
+          this.isLoading = false;
+        }
         console.log('get stavke');
         this.isLoading = false;
         this.izracunajUkupnoKalorija(stavke);
@@ -95,11 +99,9 @@ export class UnosPage implements OnInit {
       stavke.forEach(s => {
         this.ukupnoKalorija+=s.kalorija;
       });
+    }else{
+      this.ukupnoKalorija=0;
     }
-    this.unosService.editDnevniUnos(this.unos.id, this.idKorisnika, this.unos.datum, this.ukupnoKalorija).subscribe(
-    ()=>{ console.log('Unos izmenjen') });
-    
-    
   }
 
   onFabClick(){
@@ -108,6 +110,9 @@ export class UnosPage implements OnInit {
   }
 
   ionViewDidLeave(){
+    this.unosService.editDnevniUnos(this.unos.id, this.idKorisnika, this.unos.datum, this.ukupnoKalorija).subscribe(
+      ()=>{ console.log('Unos izmenjen') });
+      
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
     this.pageService.setDodavanjeStavkiUReceptMode(false); 
   }
