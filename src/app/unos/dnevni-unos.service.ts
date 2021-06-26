@@ -105,7 +105,6 @@ export class DnevniUnosService {
         return this.http.put(
           `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/dnevniUnos/${id}.json?auth=${token}`,
           {
-            id,
             datum,
             idKorisnik,
             ukupnoKalorija
