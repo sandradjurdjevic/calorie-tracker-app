@@ -10,6 +10,7 @@ export class PageModeService {
   //za recept-details
   dodavanjeNovogRecepta: boolean;
   izmenaRecepta: boolean;
+  brisanjeRecepta: boolean;
   //za stiklic u pretraga/tabs/food
   itemSelected: boolean;
   //spoljni kljucevi
@@ -35,6 +36,18 @@ export class PageModeService {
   }
   setDodavanjeNovogRecepta(value: boolean){
     this.dodavanjeNovogRecepta=value;
+  }
+  getIzmenaRecepta():boolean{
+    return this.izmenaRecepta;
+  }
+  setIzmenaRecepta(value: boolean){
+    this.izmenaRecepta=value;
+  }
+  getBrisanjeRecepta():boolean{
+    return this.brisanjeRecepta;
+  }
+  setBrisanjeRecepta(value: boolean){
+    this.brisanjeRecepta=value;
   }
   getItemSelected():boolean{
     return this.itemSelected;

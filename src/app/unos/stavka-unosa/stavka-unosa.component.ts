@@ -18,20 +18,26 @@ export class StavkaUnosaComponent implements OnInit {
 
   @Input() stavka: Stavka;
     naziv: string;
+    isLoading = false;
 
   constructor(private pageService: PageModeService,private foodService: FoodService, private stavkaService: StavkaService, 
               private recipeService: RecipesService, private nav: NavController, private modalCtrl: ModalController) { }
 
   ngOnInit() {
+    this.isLoading=true;
     //u tabeli stavka nemam atribut naziv vec ga dovlacim preko id-a u zavisnosti od toga da li je food/recept
     if(this.stavka.idFood != null){
       this.foodService.getFoodItem(this.stavka.idFood).subscribe((item) => {
         this.naziv = item.naziv;
+        this.isLoading=false;
       })
       
     }
     if(this.stavka.idRecept != null){
-      this.naziv = this.recipeService.getRecipe(this.stavka.idRecept).naziv;
+      this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
+        this.naziv = recept.naziv;
+        this.isLoading=false;
+      })
     }
   }
 

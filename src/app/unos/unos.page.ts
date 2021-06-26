@@ -20,6 +20,9 @@ export class UnosPage implements OnInit {
   unos: DnevniUnos = null;
   stavke: Stavka[];
 
+  ukupnoKalorija: number = 0;
+  isLoading = false;
+
   constructor(private stavkaService: StavkaService, private pageService: PageModeService, 
     private foodService:FoodService, private recipeService: RecipesService, private unosService:DnevniUnosService,
     private nav: NavController, private authService: AuthService) { 
@@ -30,10 +33,11 @@ export class UnosPage implements OnInit {
     
     this.unosService.dnevniUnos.subscribe((dnevniUnos) => {
       this.unos = dnevniUnos;
-    })/*
+      
+    })
     this.stavkaService.stavkePretraga.subscribe((stavke) => {
       this.stavke = stavke;
-    })*/
+    })
 
 
     let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
@@ -43,10 +47,11 @@ export class UnosPage implements OnInit {
     })
     this.unosService.getDnevniUnosi().subscribe((unosi) => {
       
+    var noviRegistrovaniKorisnik=false;
       for(const u in unosi){
         if(unosi[u].idKorisnik===this.idKorisnika){
           if(danasnjiDatum === unosi[u].datum){
-            console.log('postavljen unos');
+            console.log('Postavljen unos');
             this.unos = unosi[u];
             this.unosService.setDnevniUnos(this.unos);
           }else{
@@ -55,8 +60,14 @@ export class UnosPage implements OnInit {
               console.log('Dodat novi unos')
             });
           }
-          
+          noviRegistrovaniKorisnik=true;
         }
+      }
+      if(!noviRegistrovaniKorisnik){
+        this.unosService.addDnevniUnos().subscribe((unos) => {
+          this.unos = unos;
+          console.log('Dodat novi unos za novog korisnika')
+        });
       }
 
     });
@@ -66,13 +77,29 @@ export class UnosPage implements OnInit {
   ionViewWillEnter(){
     //svaki put kad se udje na stranicu ponovo ucitava stavke za danasnji unos
     //umesto preko id-a pretrazivati i preko datuma nekako
+    
+    this.isLoading = true;
     if(this.unos!=null){
       this.stavkaService.getStavke(this.unos.id).subscribe((stavke) => {
-        this.stavke = stavke;
+        console.log('get stavke');
+        this.isLoading = false;
+        this.izracunajUkupnoKalorija(stavke);
       })
     }
     
     this.pageService.setItemSelected(false);
+  }
+
+  izracunajUkupnoKalorija(stavke: Stavka[]):void{
+    if(stavke!=null){
+      stavke.forEach(s => {
+        this.ukupnoKalorija+=s.kalorija;
+      });
+    }
+    this.unosService.editDnevniUnos(this.unos.id, this.idKorisnika, this.unos.datum, this.ukupnoKalorija).subscribe(
+    ()=>{ console.log('Unos izmenjen') });
+    
+    
   }
 
   onFabClick(){
@@ -82,7 +109,8 @@ export class UnosPage implements OnInit {
 
   ionViewDidLeave(){
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
-    this.pageService.setDodavanjeStavkiUReceptMode(false);
+    this.pageService.setDodavanjeStavkiUReceptMode(false); 
   }
+
 
 }

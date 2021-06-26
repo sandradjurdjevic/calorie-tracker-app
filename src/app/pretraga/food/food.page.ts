@@ -38,6 +38,7 @@ export class FoodPage implements OnInit {
     }
     if(this.pageService.getDodavanjeStavkiUReceptMode()){
       this.pageService.setDodavanjeStavkiUReceptMode(false);
+
       this.nav.navigateForward(`/pretraga/tabs/cookbook/${this.pageService.getIdRecepta()}`);
     }
   }
