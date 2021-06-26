@@ -13,16 +13,14 @@
     <ion-input
     name="nazivRecepta" 
     type="text" 
-    [(ngModel)]="naziv"
-    (input)="onChangeOfNazivRecepta($event)"></ion-input>
+    [(ngModel)]="naziv"></ion-input>
   </ion-item>
   <ion-item *ngIf="!isLoading">
     <ion-label position="floating">Opis: </ion-label>
     <ion-textarea
     name="nazivRecepta" 
     type="text" 
-    [(ngModel)]="opis"
-    (input)="onChangeOfOpisRecepta($event)"></ion-textarea>
+    [(ngModel)]="opis"></ion-textarea>
   </ion-item>
 
   <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" (click)="onDodaj()">

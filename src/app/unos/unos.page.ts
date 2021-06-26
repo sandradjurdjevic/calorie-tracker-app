@@ -18,7 +18,7 @@ import { StavkaService } from './stavka.service';
 export class UnosPage implements OnInit {
   idKorisnika: string;
   unos: DnevniUnos = null;
-  stavke: Stavka[];
+  stavke: any[];
 
   ukupnoKalorija: number = 0;
   isLoading = false;
@@ -35,8 +35,8 @@ export class UnosPage implements OnInit {
       this.unos = dnevniUnos;
       
     })
-    this.stavkaService.stavkePretraga.subscribe((stavke) => {
-      this.stavke = stavke;
+    this.stavkaService.stavkePretraga.subscribe((stavkePretraga) => {
+      this.stavke = stavkePretraga;
     })
 
 
@@ -56,7 +56,7 @@ export class UnosPage implements OnInit {
             this.unosService.setDnevniUnos(this.unos);
           }else{
             this.unosService.addDnevniUnos().subscribe((unos) => {
-              this.unos = unos;
+              
               console.log('Dodat novi unos')
             });
           }
@@ -65,7 +65,6 @@ export class UnosPage implements OnInit {
       }
       if(!noviRegistrovaniKorisnik){
         this.unosService.addDnevniUnos().subscribe((unos) => {
-          this.unos = unos;
           console.log('Dodat novi unos za novog korisnika')
         });
       }
@@ -77,14 +76,12 @@ export class UnosPage implements OnInit {
   ionViewWillEnter(){
     //svaki put kad se udje na stranicu ponovo ucitava stavke za danasnji unos
     //umesto preko id-a pretrazivati i preko datuma nekako
-    
+    console.log('get stavke');
     this.isLoading = true;
     if(this.unos!=null){
+      console.log('get stavke');
       this.stavkaService.getStavke(this.unos.id).subscribe((stavke) => {
-        if(stavke==null){
-          console.log('korisnik nema stavki stavke');
-          this.isLoading = false;
-        }
+        
         console.log('get stavke');
         this.isLoading = false;
         this.izracunajUkupnoKalorija(stavke);
@@ -95,13 +92,10 @@ export class UnosPage implements OnInit {
   }
 
   izracunajUkupnoKalorija(stavke: Stavka[]):void{
-    if(stavke!=null){
-      stavke.forEach(s => {
-        this.ukupnoKalorija+=s.kalorija;
-      });
-    }else{
-      this.ukupnoKalorija=0;
-    }
+    console.log(stavke);
+     for(const i in stavke){
+       this.ukupnoKalorija+=stavke[i].kalorija;
+     }
   }
 
   onFabClick(){

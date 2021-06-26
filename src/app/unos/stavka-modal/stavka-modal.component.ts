@@ -50,7 +50,10 @@ export class StavkaModalComponent implements OnInit {
     }
     if(this.stavka.idRecept != null){
       this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
-        this.recipe = recept;
+        if(recept!='obrisan'){
+
+          this.recipe = recept;
+        }
       })
       if(this.kolicina.length > 0){
         this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija);

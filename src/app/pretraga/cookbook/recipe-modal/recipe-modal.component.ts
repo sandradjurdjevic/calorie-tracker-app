@@ -19,41 +19,46 @@ export class RecipeModalComponent implements OnInit {
   naziv: string; opis: string;
   sastojci: RecipeFoodItem[];
 
-  constructor(private modalCtrl: ModalController, private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
+  constructor(private modalCtrl: ModalController, private navCtrl:NavController, private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
 
   ngOnInit() {
     console.log(this.recipe.naziv);
     
       this.naziv = this.recipe.naziv; this.opis=this.recipe.opis;
       this.kalorija= this.recipe.ukupnoKalorija; this.masti= this.recipe.ukupnoMasti; this.ugljenihHidrata= this.recipe.ukupnoUgljenihHidrata; this.proteina= this.recipe.ukupnoProteina; 
-      this.sastojci = this.sastojciService.getRecipeFoodItemsNiz(this.recipe.id);
+      this.sastojciService.recipeItems.subscribe((items)=>{
+        this.sastojci = items;
+      })
     
       this.kolicina = '1';
     
   }
 
   ionViewWillEnter(){
+    this.sastojciService.getRecipeFoodItemsBaza(this.recipe.id).subscribe((items)=>{
+      console.log('get sastojci')
+    })
   }
 
   onClose() {
     this.modalCtrl.dismiss();
   }
-/*
+
   onEditRecipeClick(event: Event){
     this.pageService.setIzmenaRecepta(true);
     this.pageService.setDodavanjeNovogRecepta(false);
     this.pageService.setBrisanjeRecepta(false);
-   // this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
+    this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
     this.modalCtrl.dismiss();
   }
   onDeleteRecipeClick(event: Event){
     this.pageService.setBrisanjeRecepta(true);
     this.pageService.setDodavanjeNovogRecepta(false);
     this.pageService.setIzmenaRecepta(false);
-  //  this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
+    this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
     this.modalCtrl.dismiss();
   }
-*/
+
   onChangeOfUnetaKolicina(event: Event){
     this.kolicina = (event.target as HTMLInputElement).value;
       if(this.kolicina.length > 0){

@@ -48,17 +48,14 @@ export class StavkaService {
             );
           }
         }
-        if(sveStavke.length <=0){
-          return null;
-        }else{
           return sveStavke;
+      }), take(1),
+      tap((sveStavke)=>{
+        if(sveStavke.length > 0){
+          this._stavkePretraga.next(sveStavke);
         }
-      }),
-      tap(stavke => {
-        this._stavkePretraga.next(stavke);
       })
-    );
-
+    )
   }
 
   addStavka (kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {

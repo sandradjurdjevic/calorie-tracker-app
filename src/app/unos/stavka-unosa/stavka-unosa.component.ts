@@ -35,7 +35,11 @@ export class StavkaUnosaComponent implements OnInit {
     }
     if(this.stavka.idRecept != null){
       this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
-        this.naziv = recept.naziv;
+
+        if(recept != 'obrisan'){
+          this.naziv = recept.naziv;
+        }
+        
         this.isLoading=false;
       })
     }
@@ -60,6 +64,7 @@ export class StavkaUnosaComponent implements OnInit {
         this.stavka.masti = resultData.data.stavkaData.stavka.masti;
         this.stavka.ugljenihHidrata = resultData.data.stavkaData.stavka.ugljenihHidrata;
         this.stavka.proteina = resultData.data.stavkaData.stavka.proteina;
+        
         this.stavkaService.editStavka(this.stavka.redniBroj, this.stavka.kalorija, this.stavka.masti, 
           this.stavka.ugljenihHidrata, this.stavka.proteina, this.stavka.kolicina, 
           this.stavka.idFood, this.stavka.idRecept).subscribe((stavke)=>{})

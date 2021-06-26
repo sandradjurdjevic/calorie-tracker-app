@@ -25,9 +25,10 @@ export class CookbookPage implements OnInit {
 
   ionViewWillEnter(){
     this.isLoading = true;
-    console.log('doso ovde');
+
     this.pageService.setDodavanjeStavkeUnosaFoodMode(false);
     this.recipeService.getRecipes().subscribe((recipes)=>{
+      
       console.log('get recipes');
       this.isLoading=false;
     });

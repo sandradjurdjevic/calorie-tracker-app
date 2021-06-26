@@ -55,6 +55,7 @@ export class RecipeDetailsPage implements OnInit {
       }else{
         this.isLoading=true;
         this.recipeService.getRecipe(paramMap.get('recipeId')).subscribe((recept) => {
+          if(recept != 'obrisan'){
             console.log(recept);
             this.recipe = recept;
             this.isLoading=false;
@@ -62,11 +63,20 @@ export class RecipeDetailsPage implements OnInit {
             this.masti = this.recipe.ukupnoMasti;
             this.proteina = this.recipe.ukupnoProteina;
             this.ugljenihHidrata = this.recipe.ukupnoUgljenihHidrata;
+            this.naziv = this.recipe.naziv;
+            this.opis = this.recipe.opis;
             this.idRecepta = paramMap.get('recipeId');
+          }
+            
           });
       }
         
     })
+    if(this.pageService.getIzmenaRecepta() || this.pageService.getBrisanjeRecepta()){
+      this.sastojciService.recipeItems.subscribe((items)=>{
+        this.sastojci = items;
+      })
+    }
   }
 
   ionViewWillEnter(){
@@ -82,16 +92,21 @@ export class RecipeDetailsPage implements OnInit {
       this.izracunajKartice();
     }
     if(this.pageService.getIzmenaRecepta()){
-      this.sastojciService.getRecipeFoodItemsNiz(this.pageService.getIdRecepta());
+      this.sastojciService.getRecipeFoodItemsBaza(this.idRecepta).subscribe((items)=>{
+        console.log('get sastojci')
+        this.izracunajKartice();
+      })
       
-      this.buttonText = "IZMENI RECEPT"
-      this.izracunajKartice();
+      this.buttonText = "IZMENI RECEPT";
     }
     if(this.pageService.getBrisanjeRecepta()){
-      this.sastojciService.getRecipeFoodItemsNiz(this.pageService.getIdRecepta());
+      this.sastojciService.getRecipeFoodItemsBaza(this.idRecepta).subscribe((items)=>{
+        console.log('get sastojci')
+        this.izracunajKartice();
+      })
+
+      this.buttonText = "OBRISI RECEPT";
       
-      this.buttonText = "OBRISI RECEPT"
-      this.izracunajKartice();
     }
     
   }
@@ -118,12 +133,6 @@ export class RecipeDetailsPage implements OnInit {
 
   }
 
-  onChangeOfNazivRecepta(event: Event): void {
-    this.recipe.naziv = (event.target as HTMLInputElement).value;
-  }
-  onChangeOfOpisRecepta(event: Event): void {
-    this.recipe.opis = (event.target as HTMLInputElement).value;
-  }
 
   onDodajSastojke():void{
     this.pageService.setDodavanjeStavkiUReceptMode(true);
@@ -137,16 +146,40 @@ export class RecipeDetailsPage implements OnInit {
     this.recipe.ukupnoMasti = this.masti;
     this.recipe.ukupnoProteina = this.proteina;
     this.recipe.ukupnoUgljenihHidrata = this.ugljenihHidrata;
-    
-    this.recipeService.addRecipe(this.recipe.naziv, this.recipe.opis, 
-      this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
-      this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
-      console.log('Recept je sacuvan...');
-    });
+    if(this.pageService.getDodavanjeNovogRecepta()){
+      this.recipeService.addRecipe(this.naziv, this.opis, 
+        this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
+        this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
+        console.log('Recept je sacuvan...');
+      });
+      this.sastojci.forEach(s => {
+        this.sastojciService.addRecipeItemUBazu(s.idFood, s.kolicina).subscribe((item)=>{})
+      });
+  
+      this.pageService.setDodavanjeNovogRecepta(false);
+      this.nav.navigateForward('/pretraga/tabs/cookbook');  
+    }
+    if(this.pageService.getIzmenaRecepta()){
+      this.recipeService.editRecipe(this.recipe.id, this.naziv, this.opis, 
+        this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
+        this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
+        console.log('Recept je izmenjen...');
+      });
+      this.pageService.setIzmenaRecepta(false);
+      this.nav.navigateForward('/pretraga/tabs/cookbook'); 
+    }
+    if(this.pageService.getBrisanjeRecepta()){
+      this.recipeService.deleteRecipe(this.recipe.id).subscribe((recipes)=>{
+        console.log('Recept je obrisan...');
+      });
 
-    this.pageService.setDodavanjeNovogRecepta(false);
-    
-    this.nav.navigateForward('/pretraga/tabs/cookbook');
+      this.sastojci.forEach(s => {
+        this.sastojciService.deleteRecipeItemBaza(s.id).subscribe((item)=>{})
+      });
+
+      this.pageService.setIzmenaRecepta(false);
+      this.nav.navigateForward('/pretraga/tabs/cookbook'); 
+    }
     
   }
 

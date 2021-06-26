@@ -50,16 +50,21 @@ export class RecipesService {
         );
       }),
       map((resData: RecipeData) => {
-        return new Recipe(
-          id,
-          resData.naziv,
-          resData.opis,
-          resData.ukupnoKalorija,
-          resData.ukupnoMasti,
-          resData.ukupnoProteina,
-          resData.ukupnoUgljenihHidrata,
-          resData.idKorisnik
-        );
+        if(resData !=null){
+          return new Recipe(
+            id,
+            resData.naziv,
+            resData.opis,
+            resData.ukupnoKalorija,
+            resData.ukupnoMasti,
+            resData.ukupnoProteina,
+            resData.ukupnoUgljenihHidrata,
+            resData.idKorisnik
+          );
+        }else{
+          return 'obrisan';
+        }
+        
       })
     );
   }
@@ -100,6 +105,7 @@ export class RecipesService {
       tap((recipes) => {
         newRecipe.id = generatedId;
         this._recipes.next(recipes.concat(newRecipe));
+        this._newRecipe.next(newRecipe);
       })
     );
   }
@@ -120,7 +126,7 @@ export class RecipesService {
           );
       }),
       take(1),
-      switchMap((resData: any) => {
+      map((resData: any) => {
         const recipes: Recipe[] = [];
         for (const key in resData) {
           if (resData.hasOwnProperty(key) && resData[key].idKorisnik==userId) {
@@ -131,8 +137,12 @@ export class RecipesService {
             );
           }
         }
-        this._recipes.next(recipes);
         return recipes;
+      }),take(1),
+      tap((recipes) => {
+        if(recipes.length > 0){
+          this._recipes.next(recipes);
+        }
       })
     
     );
@@ -140,50 +150,51 @@ export class RecipesService {
   }
 
   editRecipe(
-    id: string,
-    naziv: string,
-    opis: string,
-    ukupnoKalorija: number,
-    ukupnoMasti:number,
-    ukupnoProteina:number,
-    ukupnoUgljenihHidrata:number
-  ) {
-    return this.authService.token.pipe(
+    id: string,naziv: string,opis: string,ukupnoKalorija: number,ukupnoMasti:number,ukupnoProteina:number,ukupnoUgljenihHidrata:number) {
+    var idKorisnik;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap((userId)=>{
+        idKorisnik = userId;
+        return this.authService.token
+      }),
       take(1),
       switchMap((token) => {
-        return this.http.put(
-          `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/recipes/${id}.json?auth=${token}`,
-          {
+          return this.http.put(
+            `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/recipes/${id}.json?auth=${token}`,
+            {
+              naziv,
+              opis,
+              ukupnoKalorija,
+              ukupnoMasti,
+              ukupnoProteina,
+              ukupnoUgljenihHidrata,
+              idKorisnik
+            }
+          );
+        }),
+        switchMap(() => {
+          return this.recipes;
+        }),
+        take(1),
+        tap((recipes) => {
+          const updatedRecipeIndex = recipes.findIndex((r) => r.id === id);
+          const updatedRecipes = [...recipes];
+          updatedRecipes[updatedRecipeIndex] = new Recipe(
+            id,
             naziv,
             opis,
             ukupnoKalorija,
             ukupnoMasti,
             ukupnoProteina,
             ukupnoUgljenihHidrata,
-            
-          }
-        );
-      }),
-      switchMap(() => {
-        return this.recipes;
-      }),
-      take(1),
-      tap((recipes) => {
-        const updatedRecipeIndex = recipes.findIndex((r) => r.id === id);
-        const updatedRecipes = [...recipes];
-        updatedRecipes[updatedRecipeIndex] = new Recipe(
-          id,
-          naziv,
-          opis,
-          ukupnoKalorija,
-          ukupnoMasti,
-          ukupnoProteina,
-          ukupnoUgljenihHidrata,
-          'idKorisnik'
-        );
-        this._recipes.next(updatedRecipes);
-      })
+            idKorisnik
+          );
+          this._recipes.next(updatedRecipes)
+        })
+      
     );
+    
   }
 
   deleteRecipe(id: string) {
