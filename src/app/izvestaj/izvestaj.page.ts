@@ -12,7 +12,7 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./izvestaj.page.scss'],
 })
 export class IzvestajPage implements OnInit {
- 
+  isLoading = false;
   public dnevniUnosi: DnevniUnos[]=[];
   idKorisnika: string;
 
@@ -27,24 +27,42 @@ export class IzvestajPage implements OnInit {
   constructor(private dnevniUnosService: DnevniUnosService,private authService:AuthService) { }
 
   ngOnInit() {
+    console.log("andjela1");
     this.authService.userId.subscribe((id)=>{
       this.idKorisnika = id;
     })
-console.log(this.idKorisnika);
-    this.dnevniUnosService.getDnevniUnosi().subscribe((unosi)=>{
-      for(const i in unosi){
-        if(unosi[i].idKorisnik===this.idKorisnika){
-          console.log("andjela");
-          console.log(unosi[i]);
-          console.log(unosi);
-          this.dnevniUnosi.push(unosi[i]);
-        }
-      }
-      })
     
+console.log(this.idKorisnika);
+this.isLoading = false;
   }
 
- ngAfterViewInit() {
+   delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+   
+}
+
+ async ngAfterViewInit() {
+  this.isLoading = true;
+  
+   console.log("andjela2");
+
+   this.dnevniUnosService.getDnevniUnosi().subscribe((unosi)=>{
+    for(const i in unosi){
+      if(unosi[i].idKorisnik===this.idKorisnika){
+        //console.log("andjela");
+       // console.log(unosi[i]);
+       // console.log(unosi);
+        this.dnevniUnosi.push(unosi[i]);
+      }
+    }
+    console.log(this.dnevniUnosi);
+    for(let i = 0; i < this.dnevniUnosi.length; i++){
+      console.log(this.dnevniUnosi[i].datum);
+    }
+    })
+    this.isLoading = false;
+
+    await this.delay(1000);
   let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
   var myPastDate=new Date(danasnjiDatum);
   myPastDate.setDate(myPastDate.getDate() - 1);
@@ -68,52 +86,52 @@ console.log(this.idKorisnika);
   myPastDate.setDate(myPastDate.getDate() - 7);
   let sedampre=formatDate(myPastDate, 'yyyy-MM-dd', 'en-US');
 
+  let danasKcal=0;
+    let juceKcal=0;
+    let dvapreKcal=0;
+    let tripreKcal=0;
+    let cetiripreKcal=0;
+    let petpreKcal=0;
+    let sestpreKcal=0;
+    this.isLoading = true;
+    for(let i = 0; i < this.dnevniUnosi.length; i++){
+      if(this.dnevniUnosi[i].datum===danasnjiDatum){
+        danasKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }
+      if(this.dnevniUnosi[i].datum===juce){
+        juceKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }
+      if(this.dnevniUnosi[i].datum===dvapre){
+        dvapreKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }
+      if(this.dnevniUnosi[i].datum===tripre){
+        tripreKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }
+      if(this.dnevniUnosi[i].datum===cetiripre){
+        cetiripreKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }
+      if(this.dnevniUnosi[i].datum===petpre){
+        petpreKcal=this.dnevniUnosi[i].ukupnoKalorija;
+        //console.log(this.dnevniUnosi[i].datum)
+      }
+      if(this.dnevniUnosi[i].datum===sestpre){
+        sestpreKcal=this.dnevniUnosi[i].ukupnoKalorija;
+      }else{}
+      
+    }
+    console.log("blablalal");
+    this.isLoading = false;
   //treba mi metoda koja izvlaci za taj datum iz dnevni unosi i postavlja na odg poziciju,else 0
-    this.barChartMethod(danasnjiDatum,juce,dvapre,tripre,cetiripre,petpre,sestpre);
+    this.barChartMethod(danasnjiDatum,juce,dvapre,tripre,cetiripre,petpre,sestpre,danasKcal,
+      juceKcal,dvapreKcal,tripreKcal,cetiripreKcal,petpreKcal,sestpreKcal);
   }
 
-  barChartMethod(danasnjiDatum,juce,dvapre,tripre,cetiripre,petpre,sestpre) {
-    let danasKcal;
-    let juceKcal;
-    let dvapreKcal;
-    let tripreKcal;
-    let cetiripreKcal;
-    let petpreKcal;
-    let sestpreKcal;
-    for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===danasnjiDatum){
-        danasKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{danasKcal=0}
-    }
-    for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===juce){
-        juceKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{juceKcal=0}
-    }
-    for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===dvapre){
-        dvapreKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{dvapreKcal=0}
-    }
-    for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===tripre){
-        tripreKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{tripreKcal=0}
-    }for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===cetiripre){
-        cetiripreKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{cetiripreKcal=0}
-    }for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===petpre){
-        petpreKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{petpreKcal=0}
-    }for(const i in this.dnevniUnosi){
-      if(this.dnevniUnosi[i].datum===sestpre){
-        sestpreKcal=this.dnevniUnosi[i].ukupnoKalorija
-      }else{sestpreKcal=0}
-    }
+  barChartMethod(danasnjiDatum,juce,dvapre,tripre,cetiripre,petpre,sestpre,danasKcal,
+    juceKcal,dvapreKcal,tripreKcal,cetiripreKcal,petpreKcal,sestpreKcal) {
+    
+    console.log(sestpreKcal);
 
-    //console.log(myPastDate);
+  
     this.barChart = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {

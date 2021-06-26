@@ -16,7 +16,7 @@ export class FoodPage implements OnInit {
   private foodSub: Subscription;
 
   constructor(private foodService: FoodService, private pageService: PageModeService, private nav: NavController) {
-   }
+   } 
 
   ngOnInit() {
     this.foodSub = this.foodService.food.subscribe((food) => {
