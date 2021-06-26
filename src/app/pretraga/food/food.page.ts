@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-food',
-  templateUrl: './food.page.html',
+  templateUrl: './food.page.html', 
   styleUrls: ['./food.page.scss'],
 })
 export class FoodPage implements OnInit {
@@ -16,7 +16,7 @@ export class FoodPage implements OnInit {
   private foodSub: Subscription;
 
   constructor(private foodService: FoodService, private pageService: PageModeService, private nav: NavController) {
-   }
+   } 
 
   ngOnInit() {
     this.foodSub = this.foodService.food.subscribe((food) => {
