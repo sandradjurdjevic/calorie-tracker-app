@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { PageModeService } from 'src/app/page-mode.service';
-import { FoodService } from '../../food.service';
 import { RecipeFoodItem } from '../food-of-recipe/recipe-food-item.model';
 import { RecipeFoodItemService } from '../food-of-recipe/recipe-food-item.service';
 import { Recipe } from '../recipe.model';
@@ -16,20 +15,20 @@ export class RecipeModalComponent implements OnInit {
   @Input() recipe: Recipe;
   @Input() buttonText: string;
 
-  kolicina: string; kalorija: string; masti: string; ugljenihHidrata: string; proteina:string;
+  kolicina: string; kalorija: number; masti: number; ugljenihHidrata: number; proteina:number;
   naziv: string; opis: string;
   sastojci: RecipeFoodItem[];
 
-  constructor(private modalCtrl: ModalController,  private foodService: FoodService,private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
+  constructor(private modalCtrl: ModalController, private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
 
   ngOnInit() {
     console.log(this.recipe.naziv);
     
       this.naziv = this.recipe.naziv; this.opis=this.recipe.opis;
       this.kalorija= this.recipe.ukupnoKalorija; this.masti= this.recipe.ukupnoMasti; this.ugljenihHidrata= this.recipe.ukupnoUgljenihHidrata; this.proteina= this.recipe.ukupnoProteina; 
-      this.sastojci = this.sastojciService.getRecipeFoodItems(this.recipe.id);
+      this.sastojci = this.sastojciService.getRecipeFoodItemsNiz(this.recipe.id);
     
-      this.kolicina = "1";
+      this.kolicina = '1';
     
   }
 
@@ -39,17 +38,29 @@ export class RecipeModalComponent implements OnInit {
   onClose() {
     this.modalCtrl.dismiss();
   }
-
-  
-  
-
+/*
+  onEditRecipeClick(event: Event){
+    this.pageService.setIzmenaRecepta(true);
+    this.pageService.setDodavanjeNovogRecepta(false);
+    this.pageService.setBrisanjeRecepta(false);
+   // this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
+    this.modalCtrl.dismiss();
+  }
+  onDeleteRecipeClick(event: Event){
+    this.pageService.setBrisanjeRecepta(true);
+    this.pageService.setDodavanjeNovogRecepta(false);
+    this.pageService.setIzmenaRecepta(false);
+  //  this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
+    this.modalCtrl.dismiss();
+  }
+*/
   onChangeOfUnetaKolicina(event: Event){
     this.kolicina = (event.target as HTMLInputElement).value;
       if(this.kolicina.length > 0){
-        this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija).toString();
-        this.masti= (+this.kolicina*+this.recipe.ukupnoMasti).toString();
-        this.ugljenihHidrata= (+this.kolicina*+this.recipe.ukupnoUgljenihHidrata).toString();
-        this.proteina= (+this.kolicina*+this.recipe.ukupnoProteina).toString();
+        this.kalorija= (+this.kolicina*this.recipe.ukupnoKalorija);
+        this.masti= (+this.kolicina*this.recipe.ukupnoMasti);
+        this.ugljenihHidrata= (+this.kolicina*this.recipe.ukupnoUgljenihHidrata);
+        this.proteina= (+this.kolicina*this.recipe.ukupnoProteina);
       }
   
   }

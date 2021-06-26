@@ -9,6 +9,7 @@ import { RecipeFoodItem } from './recipe-food-item.model';
   styleUrls: ['./food-recipe.component.scss'],
 })
 export class FoodRecipeComponent implements OnInit {
+  isLoading = false;
   @Input() sastojak: RecipeFoodItem; 
   food: Food;
   constructor(private foodService: FoodService) {
@@ -16,8 +17,10 @@ export class FoodRecipeComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.isLoading = true;
     this.foodService.getFoodItem(this.sastojak.idFood).subscribe((item) => {
       this.food = item;
+      this.isLoading = false;
     })
   }
 

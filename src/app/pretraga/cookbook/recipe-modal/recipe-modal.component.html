@@ -2,12 +2,21 @@
   <ion-toolbar>
     <ion-title>{{naslov}}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="onClose()">Close</ion-button>
+      <ion-button (click)="onClose()">Close</ion-button> 
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen class="ion-padding">
+  
+  <ion-fab horizontal="end" vertical="top" slot="fixed">
+    <ion-fab-button >
+      <ion-icon name="create-sharp" (click)="onEditRecipeClick()"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button>
+      <ion-icon name="trash-sharp" (click)="onDeleteRecipeClick()"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
   <ion-item >
     <ion-label position="floating">Naziv: </ion-label>
@@ -107,5 +116,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
+  
+  
+  
 </ion-content>

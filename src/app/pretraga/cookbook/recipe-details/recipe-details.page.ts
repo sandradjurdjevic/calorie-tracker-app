@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Stavka } from 'src/app/unos/stavka.model';
-import { Food } from '../../food.model';
 import { Recipe } from '../recipe.model';
 import { RecipesService } from '../recipe.service';
-import { StavkaService } from  'src/app/unos/stavka.service';
 import { PageModeService } from 'src/app/page-mode.service';
 import { FoodService } from '../../food.service';
 import { NavController } from '@ionic/angular';
@@ -17,21 +14,23 @@ import { RecipeFoodItemService } from '../food-of-recipe/recipe-food-item.servic
   styleUrls: ['./recipe-details.page.scss'],
 })
 export class RecipeDetailsPage implements OnInit {
-  recipe: Recipe = {id: '',naziv: '',opis:'',ukupnoKalorija:'',ukupnoMasti:'',ukupnoProteina:'',ukupnoUgljenihHidrata:'',idKorisnik:''};
+  idRecepta:string;
+
+  recipe: Recipe;
   sastojci: RecipeFoodItem[];
 
   buttonText: string;
 
   kolicina: string = '1';
-  kalorija:string; masti:string; proteina:string; ugljenihHidrata:string;
+  kalorija:number; masti:number; proteina:number; ugljenihHidrata:number;
 
   naziv: string; opis: string;
 
   //ngIf promenljive
   karticeNoviRecept: boolean;
+  isLoading = false;
 
-  constructor(private route:ActivatedRoute, 
-    private stavkaService: StavkaService, 
+  constructor(private route:ActivatedRoute,  
     private recipeService: RecipesService, 
     private foodService: FoodService,
     private sastojciService: RecipeFoodItemService,
@@ -42,41 +41,80 @@ export class RecipeDetailsPage implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
-      this.recipe = this.recipeService.getRecipe(paramMap.get('recipeId'));
+      if (!paramMap.has('recipeId')) {
+        this.nav.navigateBack('/pretraga/tabs/food');
+        return;
+      }
+      if (paramMap.get('recipeId')==='0') {
+        this.recipe = new Recipe('','','',0,0,0,0,'');
+        this.kalorija = 0;
+        this.masti = 0;
+        this.proteina = 0;
+        this.ugljenihHidrata = 0;
+        this.idRecepta = '0';
+      }else{
+        this.isLoading=true;
+        this.recipeService.getRecipe(paramMap.get('recipeId')).subscribe((recept) => {
+            console.log(recept);
+            this.recipe = recept;
+            this.isLoading=false;
+            this.kalorija = this.recipe.ukupnoKalorija;
+            this.masti = this.recipe.ukupnoMasti;
+            this.proteina = this.recipe.ukupnoProteina;
+            this.ugljenihHidrata = this.recipe.ukupnoUgljenihHidrata;
+            this.idRecepta = paramMap.get('recipeId');
+          });
+      }
+        
     })
   }
 
   ionViewWillEnter(){
-    this.kalorija = this.recipe.ukupnoKalorija;
-    this.masti = this.recipe.ukupnoMasti;
-    this.proteina = this.recipe.ukupnoProteina;
-    this.ugljenihHidrata = this.recipe.ukupnoUgljenihHidrata;
 
     if(this.pageService.getDodavanjeNovogRecepta()){
-      this.sastojci = this.sastojciService.getRecipeFoodItems(this.recipe.id);
+      var s = this.sastojciService.getRecipeFoodItemsNiz(this.pageService.getIdRecepta());
+      if(s==null){
+        this.sastojci=[];
+      }else{
+        this.sastojci=s;
+      }
       this.buttonText = "SACUVAJ RECEPT"
+      this.izracunajKartice();
+    }
+    if(this.pageService.getIzmenaRecepta()){
+      this.sastojciService.getRecipeFoodItemsNiz(this.pageService.getIdRecepta());
+      
+      this.buttonText = "IZMENI RECEPT"
+      this.izracunajKartice();
+    }
+    if(this.pageService.getBrisanjeRecepta()){
+      this.sastojciService.getRecipeFoodItemsNiz(this.pageService.getIdRecepta());
+      
+      this.buttonText = "OBRISI RECEPT"
       this.izracunajKartice();
     }
     
   }
 
   izracunajKartice(){
-    var foodItem ;
-    var ukupnoK =0;var ukupnoM = 0;var ukupnoP=0;var ukupnoUH=0;
+    //var itemF;
+    //var ukupnoK =0;var ukupnoM = 0;var ukupnoP=0;var ukupnoUH=0;
     this.sastojci.forEach(sastojak => {
+      this.isLoading = true;
       this.foodService.getFoodItem(sastojak.idFood).subscribe((item) => {
-        foodItem = item;
+        console.log(item);
+        //itemF = item;
+        this.isLoading = false;
+        this.kalorija += item.kalorije100g*sastojak.kolicina;
+        this.masti += item.masti100g*sastojak.kolicina;
+        this.proteina += item.proteini100g*sastojak.kolicina;
+        this.ugljenihHidrata += item.ugljeniHidrati100g*sastojak.kolicina;
+        console.log(this.kalorija)
+        console.log(this.masti)
+        console.log(this.proteina)
+        console.log(this.ugljenihHidrata)
       })
-      ukupnoK += +foodItem.kalorije100g*+sastojak.kolicina;
-      ukupnoM += +foodItem.masti100g*+sastojak.kolicina;
-      ukupnoP += +foodItem.proteini100g*+sastojak.kolicina;
-      ukupnoUH += +foodItem.ugljeniHidrati100g*+sastojak.kolicina;
     });
-    this.kalorija = ukupnoK.toString();
-    this.masti = ukupnoM.toString();
-    this.proteina = ukupnoP.toString();
-    this.ugljenihHidrata = ukupnoUH.toString();
-    
 
   }
 
@@ -90,6 +128,8 @@ export class RecipeDetailsPage implements OnInit {
   onDodajSastojke():void{
     this.pageService.setDodavanjeStavkiUReceptMode(true);
     this.pageService.setDodavanjeStavkeUnosaFoodMode(false);
+    
+    this.pageService.setIdRecepta(this.idRecepta);
   }
 
   onDodaj(){
@@ -98,9 +138,14 @@ export class RecipeDetailsPage implements OnInit {
     this.recipe.ukupnoProteina = this.proteina;
     this.recipe.ukupnoUgljenihHidrata = this.ugljenihHidrata;
     
-    this.recipeService.editRecipe(this.recipe);
+    this.recipeService.addRecipe(this.recipe.naziv, this.recipe.opis, 
+      this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
+      this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
+      console.log('Recept je sacuvan...');
+    });
+
     this.pageService.setDodavanjeNovogRecepta(false);
-    console.log('Recept je sacuvan...');
+    
     this.nav.navigateForward('/pretraga/tabs/cookbook');
     
   }
