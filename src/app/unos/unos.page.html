@@ -22,8 +22,11 @@
   <ion-grid *ngIf="!isLoading">
     <ion-row>
       <ion-col >
-        <ion-list>
-          <app-stavka-unosa *ngFor="let stavka of stavke" [stavka]="stavka" ></app-stavka-unosa>
+        <ion-list *ngFor="let stavka of stavke">
+          <ion-item class ="module stavka" (click)="selectStavka(stavka)">
+            <ion-title>{{stavka.naziv}}</ion-title>
+            <ion-label>{{stavka.kalorija}}</ion-label>
+          </ion-item>
         </ion-list>
       </ion-col>
     </ion-row>
