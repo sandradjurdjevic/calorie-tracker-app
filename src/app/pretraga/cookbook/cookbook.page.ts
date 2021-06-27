@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { PageModeService } from 'src/app/page-mode.service';
+import { RecipeFoodItemService } from './food-of-recipe/recipe-food-item.service';
 import { Recipe } from './recipe.model';
 import { RecipesService } from './recipe.service';
 
@@ -13,7 +14,7 @@ export class CookbookPage implements OnInit {
   recipes: Recipe[];
 
   isLoading = false;
-  constructor(private recipeService: RecipesService, private modalCtrl: ModalController,private pageService: PageModeService, private nav: NavController) {
+  constructor(private recipeService: RecipesService, private sastojciService:RecipeFoodItemService,private modalCtrl: ModalController,private pageService: PageModeService, private nav: NavController) {
     
    }
 
@@ -24,6 +25,8 @@ export class CookbookPage implements OnInit {
   }
 
   ionViewWillEnter(){
+    this.sastojciService.setPrivremeniNiz([]);
+
     this.isLoading = true;
 
     this.pageService.setDodavanjeStavkeUnosaFoodMode(false);

@@ -47,8 +47,6 @@ export class UnosPage implements OnInit {
   }
 
   ionViewWillEnter(){
-    //svaki put kad se udje na stranicu ponovo ucitava stavke za danasnji unos
-    //umesto preko id-a pretrazivati i preko datuma nekako
     console.log('get stavke');
     this.isLoading = true;
     if(this.unos!=null){
@@ -70,6 +68,7 @@ export class UnosPage implements OnInit {
        this.ukupnoKalorija+=stavke[i].kalorija;
      }
      
+     
      this.isLoading = false;
   }
 
@@ -79,7 +78,7 @@ export class UnosPage implements OnInit {
   }
 
   ionViewDidLeave(){
-    this.unosService.editDnevniUnos(this.unos.id, this.idKorisnika, this.unos.datum, this.ukupnoKalorija).subscribe(
+    this.unosService.editDnevniUnos(this.unos.id, this.unos.datum, this.ukupnoKalorija).subscribe(
       ()=>{ console.log('Unos izmenjen') });
       
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
@@ -111,7 +110,7 @@ export class UnosPage implements OnInit {
           stavka.idFood, stavka.idRecept).subscribe((stavke)=>{
 
             this.izracunajUkupnoKalorija(stavke);
-            
+
           })
 
         
