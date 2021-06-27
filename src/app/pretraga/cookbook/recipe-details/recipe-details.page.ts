@@ -7,6 +7,7 @@ import { FoodService } from '../../food.service';
 import { NavController } from '@ionic/angular';
 import { RecipeFoodItem } from '../food-of-recipe/recipe-food-item.model';
 import { RecipeFoodItemService } from '../food-of-recipe/recipe-food-item.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-recipe-details',
@@ -142,6 +143,7 @@ export class RecipeDetailsPage implements OnInit {
   }
 
   onDodaj(){
+    //if (RecipeForm.valid) {
     this.recipe.ukupnoKalorija = this.kalorija;
     this.recipe.ukupnoMasti = this.masti;
     this.recipe.ukupnoProteina = this.proteina;
@@ -163,7 +165,8 @@ export class RecipeDetailsPage implements OnInit {
       this.sastojciService.setPrivremeniNiz([]);
       this.pageService.setDodavanjeNovogRecepta(false);
       this.nav.navigateForward('/pretraga/tabs/cookbook');  
-    }
+    //}
+  }
     if(this.pageService.getIzmenaRecepta()){
       this.recipeService.editRecipe(this.recipe.id, this.naziv, this.opis, 
         this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
@@ -187,5 +190,5 @@ export class RecipeDetailsPage implements OnInit {
     }
     
   }
-
+  
 }
