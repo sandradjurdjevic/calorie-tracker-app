@@ -36,14 +36,15 @@ export class RecipeItemComponent implements OnInit {
         this.recipeStavka =  resultData.data.recipeData.recipe;
 
         
-        this.stavkaService.addStavka(this.recipeStavka.ukupnoKalorija, this.recipeStavka.ukupnoMasti,
+        this.stavkaService.addStavka(this.recipe.naziv ,this.recipeStavka.ukupnoKalorija, this.recipeStavka.ukupnoMasti,
         this.recipeStavka.ukupnoUgljenihHidrata,
         this.recipeStavka.ukupnoProteina, +this.kolicina,
         null, this.recipe.id).subscribe((stavke) => {
           console.log('Stavka dodata u dnevni unos...');
+          this.nav.navigateForward('/unos');
         });
         
-        this.nav.navigateForward('/unos');
+        
       }
     });
     

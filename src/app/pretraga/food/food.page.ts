@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 export class FoodPage implements OnInit {
   itemSelected: boolean;
   items: Food[];
+  itemsAll: Food[];
   private foodSub: Subscription;
 
   constructor(private foodService: FoodService, private pageService: PageModeService, private nav: NavController) {
@@ -21,6 +22,7 @@ export class FoodPage implements OnInit {
   ngOnInit() {
     this.foodSub = this.foodService.food.subscribe((food) => {
       this.items = food;
+      this.itemsAll = food;
     });
   }
 
@@ -32,6 +34,7 @@ export class FoodPage implements OnInit {
   }
 
   onCheckMarkClick(): void{
+    this.pageService.setItemSelected(false);
     if(this.pageService.getDodavanjeStavkeUnosaFoodMode()){
       this.pageService.setDodavanjeStavkeUnosaFoodMode(false);
       this.nav.navigateForward('/unos');
@@ -41,6 +44,21 @@ export class FoodPage implements OnInit {
 
       this.nav.navigateForward(`/pretraga/tabs/cookbook/${this.pageService.getIdRecepta()}`);
     }
+  }
+
+  searchFunction(value: string){
+    if(value.length > 0){
+      let pretragaNamirnice : Food[] = [];
+      this.items.forEach(i => {
+        if(i.naziv === value){
+          pretragaNamirnice.push(i);
+        }
+      });
+      this.items = pretragaNamirnice;
+    }else{
+      this.items = this.itemsAll;
+    }
+    
   }
   
 

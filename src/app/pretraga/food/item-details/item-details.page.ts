@@ -78,7 +78,7 @@ export class ItemDetailsPage implements OnInit {
   onDodaj(): void {
     if(this.pageService.getDodavanjeStavkeUnosaFoodMode()){
      
-      this.stavkaService.addStavka(this.kalorija,this.masti,this.ugljenihHidrata,this.proteina,+this.kolicina,this.item.id ,null).subscribe((nizStavki)=>{
+      this.stavkaService.addStavka(this.item.naziv, this.kalorija,this.masti,this.ugljenihHidrata,this.proteina,+this.kolicina,this.item.id ,null).subscribe((nizStavki)=>{
         console.log('Stavka dodata u dnevni unos...');
       })
       

@@ -44,6 +44,10 @@ export class AuthService {
     );
   }
 
+  get user(){
+    return this._user.asObservable();
+  }
+
   get userId() {
     return this._user.asObservable().pipe(
       map((user) => {

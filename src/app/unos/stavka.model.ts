@@ -3,6 +3,7 @@ export class Stavka {
     idDnevnogUnosa: string;
     redniBroj: string;
     kalorija: number;
+    naziv:string;
     masti: number;
     ugljenihHidrata: number;
     proteina: number;
@@ -10,10 +11,11 @@ export class Stavka {
     idFood: string;
     idRecept: string;
 
-    constructor(redniBroj: string, kalorija: number, 
+    constructor(redniBroj: string, naziv: string, kalorija: number, 
         masti: number, ugljenihHidrata: number,proteina: number,kolicina: number, 
         idFood: string, idRecept: string, idDnevnogUnosa: string,){
             this.idDnevnogUnosa= idDnevnogUnosa;
+            this.naziv = naziv;
             this.redniBroj= redniBroj;
             this.kalorija= kalorija;
             this.masti= masti;

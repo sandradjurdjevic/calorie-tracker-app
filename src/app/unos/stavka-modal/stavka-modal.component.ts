@@ -40,27 +40,30 @@ export class StavkaModalComponent implements OnInit {
     
       this.foodService.getFoodItem(this.stavka.idFood).subscribe((item) => {
         this.food = item;
+        if(this.kolicina.length > 0){
+          this.kalorija= (+this.kolicina*this.food.kalorije100g);
+          this.masti= (+this.kolicina*this.food.masti100g);
+          this.ugljenihHidrata= (+this.kolicina*this.food.ugljeniHidrati100g);
+          this.proteina= (+this.kolicina*this.food.proteini100g);
+        }
       })
-      if(this.kolicina.length > 0){
-        this.kalorija= (+this.kolicina*this.food.kalorije100g);
-        this.masti= (+this.kolicina*this.food.masti100g);
-        this.ugljenihHidrata= (+this.kolicina*this.food.ugljeniHidrati100g);
-        this.proteina= (+this.kolicina*this.food.proteini100g);
-      }
+      
     }
     if(this.stavka.idRecept != null){
       this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
         if(recept!='obrisan'){
 
           this.recipe = recept;
+          if(this.kolicina.length > 0){
+            this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija);
+            this.masti= (+this.kolicina*+this.recipe.ukupnoMasti);
+            this.ugljenihHidrata= (+this.kolicina*+this.recipe.ukupnoUgljenihHidrata);
+            this.proteina= (+this.kolicina*+this.recipe.ukupnoProteina);
+          }
         }
+        
       })
-      if(this.kolicina.length > 0){
-        this.kalorija= (+this.kolicina*+this.recipe.ukupnoKalorija);
-        this.masti= (+this.kolicina*+this.recipe.ukupnoMasti);
-        this.ugljenihHidrata= (+this.kolicina*+this.recipe.ukupnoUgljenihHidrata);
-        this.proteina= (+this.kolicina*+this.recipe.ukupnoProteina);
-      }
+      
     }
     
   }

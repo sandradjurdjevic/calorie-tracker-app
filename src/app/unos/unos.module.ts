@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { UnosPageRoutingModule } from './unos-routing.module';
 
 import { UnosPage } from './unos.page';
-import { StavkaUnosaComponent } from './stavka-unosa/stavka-unosa.component';
 import { StavkaModalComponent } from './stavka-modal/stavka-modal.component';
 
 @NgModule({
@@ -17,6 +16,6 @@ import { StavkaModalComponent } from './stavka-modal/stavka-modal.component';
     IonicModule,
     UnosPageRoutingModule
   ],
-  declarations: [UnosPage, StavkaUnosaComponent, StavkaModalComponent]
+  declarations: [UnosPage, StavkaModalComponent]
 })
 export class UnosPageModule {}

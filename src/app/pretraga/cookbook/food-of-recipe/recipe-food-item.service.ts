@@ -28,6 +28,9 @@ export class RecipeFoodItemService {
     return this._recipeItems.asObservable();
   } 
 
+  setPrivremeniNiz(sastojci: RecipeFoodItem[]){
+    this.recipeFoodIitems = sastojci;
+  }
   getRecipeFoodItemsNiz(idRecept: string) : RecipeFoodItem[] {
     if(this.recipeFoodIitems.length <=0){
       return null;

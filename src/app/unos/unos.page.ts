@@ -1,12 +1,14 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
+import { delay } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import { PageModeService } from '../page-mode.service';
 import { RecipesService } from '../pretraga/cookbook/recipe.service';
 import { FoodService } from '../pretraga/food.service';
 import { DnevniUnos } from './dnevni-unos.model';
 import { DnevniUnosService } from './dnevni-unos.service';
+import { StavkaModalComponent } from './stavka-modal/stavka-modal.component';
 import { Stavka } from './stavka.model';
 import { StavkaService } from './stavka.service';
 
@@ -25,9 +27,12 @@ export class UnosPage implements OnInit {
 
   constructor(private stavkaService: StavkaService, private pageService: PageModeService, 
     private foodService:FoodService, private recipeService: RecipesService, private unosService:DnevniUnosService,
-    private nav: NavController, private authService: AuthService) { 
+    private nav: NavController, private authService: AuthService, private modalCtrl: ModalController) { 
     
   }
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms))
+  };
 
   ngOnInit() {
     
@@ -35,43 +40,11 @@ export class UnosPage implements OnInit {
       this.unos = dnevniUnos;
       
     })
-    this.stavkaService.stavkePretraga.subscribe((stavkePretraga) => {
+    this.stavkaService.stavkePretraga.subscribe( (stavkePretraga) => {
       this.stavke = stavkePretraga;
     })
 
-
-    let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-    
-    this.authService.userId.subscribe((id)=>{
-      this.idKorisnika = id;
-    })
-    this.unosService.getDnevniUnosi().subscribe((unosi) => {
-      
-    var noviRegistrovaniKorisnik=false;
-      for(const u in unosi){
-        if(unosi[u].idKorisnik===this.idKorisnika){
-          if(danasnjiDatum === unosi[u].datum){
-            console.log('Postavljen unos');
-            this.unos = unosi[u];
-            this.unosService.setDnevniUnos(this.unos);
-          }else{
-            this.unosService.addDnevniUnos().subscribe((unos) => {
-              
-              console.log('Dodat novi unos')
-            });
-          }
-          noviRegistrovaniKorisnik=true;
-        }
-      }
-      if(!noviRegistrovaniKorisnik){
-        this.unosService.addDnevniUnos().subscribe((unos) => {
-          console.log('Dodat novi unos za novog korisnika')
-        });
-      }
-
-    });
   }
-
 
   ionViewWillEnter(){
     //svaki put kad se udje na stranicu ponovo ucitava stavke za danasnji unos
@@ -80,10 +53,9 @@ export class UnosPage implements OnInit {
     this.isLoading = true;
     if(this.unos!=null){
       console.log('get stavke');
-      this.stavkaService.getStavke(this.unos.id).subscribe((stavke) => {
+      this.stavkaService.getStavke().subscribe((stavke) => {
         
         console.log('get stavke');
-        this.isLoading = false;
         this.izracunajUkupnoKalorija(stavke);
       })
     }
@@ -92,10 +64,13 @@ export class UnosPage implements OnInit {
   }
 
   izracunajUkupnoKalorija(stavke: Stavka[]):void{
+    this.ukupnoKalorija=0;
     console.log(stavke);
      for(const i in stavke){
        this.ukupnoKalorija+=stavke[i].kalorija;
      }
+     
+     this.isLoading = false;
   }
 
   onFabClick(){
@@ -109,6 +84,39 @@ export class UnosPage implements OnInit {
       
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
     this.pageService.setDodavanjeStavkiUReceptMode(false); 
+  }
+
+  selectStavka(stavka: Stavka){
+    console.log('Otvaranje modala za izmenu stavke...');
+    
+    this.modalCtrl
+      .create({
+        component: StavkaModalComponent,
+        componentProps: {naslov: 'Izmena stavke', naziv: stavka.naziv, stavka: stavka}
+      })
+      .then((modal) => {
+        modal.present();
+        return modal.onDidDismiss();
+      }).then((resultData) => {
+      if (resultData.role === 'confirm') {
+        console.log(resultData);
+        stavka.kolicina = resultData.data.stavkaData.stavka.kolicina;
+        stavka.kalorija = resultData.data.stavkaData.stavka.kalorija;
+        stavka.masti = resultData.data.stavkaData.stavka.masti;
+        stavka.ugljenihHidrata = resultData.data.stavkaData.stavka.ugljenihHidrata;
+        stavka.proteina = resultData.data.stavkaData.stavka.proteina;
+        
+        this.stavkaService.editStavka(stavka.redniBroj, stavka.naziv, stavka.kalorija, stavka.masti, 
+          stavka.ugljenihHidrata, stavka.proteina, stavka.kolicina, 
+          stavka.idFood, stavka.idRecept).subscribe((stavke)=>{
+
+            this.izracunajUkupnoKalorija(stavke);
+            
+          })
+
+        
+      }
+    });
   }
 
 
