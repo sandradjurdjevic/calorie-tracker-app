@@ -71,7 +71,7 @@ export class UnosPage implements OnInit {
      
      this.isLoading = false;
   }
-
+ 
   onFabClick(){
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
     this.pageService.setDodavanjeStavkiUReceptMode(false);
