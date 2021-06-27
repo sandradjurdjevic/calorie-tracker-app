@@ -151,11 +151,12 @@ export class RecipeDetailsPage implements OnInit {
         this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
         this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
         console.log('Recept je sacuvan...');
+        
       });
       this.sastojci.forEach(s => {
         this.sastojciService.addRecipeItemUBazu(s.idFood, s.kolicina).subscribe((item)=>{})
       });
-  
+      this.sastojciService.setPrivremeniNiz([]);
       this.pageService.setDodavanjeNovogRecepta(false);
       this.nav.navigateForward('/pretraga/tabs/cookbook');  
     }

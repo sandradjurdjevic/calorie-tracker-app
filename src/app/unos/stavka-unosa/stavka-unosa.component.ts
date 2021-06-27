@@ -24,25 +24,8 @@ export class StavkaUnosaComponent implements OnInit {
               private recipeService: RecipesService, private nav: NavController, private modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.isLoading=true;
-    //u tabeli stavka nemam atribut naziv vec ga dovlacim preko id-a u zavisnosti od toga da li je food/recept
-    if(this.stavka.idFood != null){
-      this.foodService.getFoodItem(this.stavka.idFood).subscribe((item) => {
-        this.naziv = item.naziv;
-        this.isLoading=false;
-      })
+    this.naziv=this.stavka.naziv;
       
-    }
-    if(this.stavka.idRecept != null){
-      this.recipeService.getRecipe(this.stavka.idRecept).subscribe((recept) => {
-
-        if(recept != 'obrisan'){
-          this.naziv = recept.naziv;
-        }
-        
-        this.isLoading=false;
-      })
-    }
   }
 
   onStavkaClick(){
@@ -65,7 +48,7 @@ export class StavkaUnosaComponent implements OnInit {
         this.stavka.ugljenihHidrata = resultData.data.stavkaData.stavka.ugljenihHidrata;
         this.stavka.proteina = resultData.data.stavkaData.stavka.proteina;
         
-        this.stavkaService.editStavka(this.stavka.redniBroj, this.stavka.kalorija, this.stavka.masti, 
+        this.stavkaService.editStavka(this.stavka.redniBroj, this.naziv, this.stavka.kalorija, this.stavka.masti, 
           this.stavka.ugljenihHidrata, this.stavka.proteina, this.stavka.kolicina, 
           this.stavka.idFood, this.stavka.idRecept).subscribe((stavke)=>{})
       }

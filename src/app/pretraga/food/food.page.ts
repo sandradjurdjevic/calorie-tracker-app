@@ -34,6 +34,7 @@ export class FoodPage implements OnInit {
   }
 
   onCheckMarkClick(): void{
+    this.pageService.setItemSelected(false);
     if(this.pageService.getDodavanjeStavkeUnosaFoodMode()){
       this.pageService.setDodavanjeStavkeUnosaFoodMode(false);
       this.nav.navigateForward('/unos');

@@ -9,6 +9,7 @@ import { Stavka } from './stavka.model';
 interface StavkaData {
   idDnevnogUnosa: string;
   redniBroj: string;
+  naziv: string;
   kalorija: number;
   masti: number;
   ugljenihHidrata: number;
@@ -30,8 +31,14 @@ export class StavkaService {
     return this._stavkePretraga.asObservable();
   }
 
-  getStavke(idDnevnogUnosa: string) {
-    return this.authService.token.pipe(
+  getStavke() {
+    let dnevniUnosID;
+    return this.unosService.unosId.pipe(
+      take(1),
+      switchMap((unosID)=>{
+        dnevniUnosID = unosID;
+        return this.authService.token
+      }),
       take(1),
       switchMap((token) => {
         return this.http
@@ -43,8 +50,8 @@ export class StavkaService {
         console.log(stavke);
         const sveStavke: Stavka[] = [];
         for (const key in stavke) {
-          if (stavke.hasOwnProperty(key) && stavke[key].idDnevnogUnosa==idDnevnogUnosa) {
-            sveStavke.push(new Stavka(key, stavke[key].kalorija, stavke[key].masti, stavke[key].ugljenihHidrata, stavke[key].proteina, stavke[key].kolicina, stavke[key].idFood, stavke[key].idRecept, stavke[key].idDnevnogUnosa)
+          if (stavke.hasOwnProperty(key) && stavke[key].idDnevnogUnosa==dnevniUnosID) {
+            sveStavke.push(new Stavka(key, stavke[key].naziv, stavke[key].kalorija, stavke[key].masti, stavke[key].ugljenihHidrata, stavke[key].proteina, stavke[key].kolicina, stavke[key].idFood, stavke[key].idRecept, stavke[key].idDnevnogUnosa)
             );
           }
         }
@@ -53,18 +60,20 @@ export class StavkaService {
       tap((sveStavke)=>{
         if(sveStavke.length > 0){
           this._stavkePretraga.next(sveStavke);
+        }else{
+          this._stavkePretraga.next([]);
         }
       })
     )
   }
 
-  addStavka (kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
+  addStavka (naziv:string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
     let idDnevnogUnosa;
     /*this.unosService.dnevniUnos.subscribe((unos)=>{
       idDnevnogUnosa = unos.id;
     })*/
     let newStavka: Stavka = new Stavka(
-      null, kalorija, masti, ugljenihHidrata, proteina, kolicina, idFood, idRecept, null
+      null, naziv, kalorija, masti, ugljenihHidrata, proteina, kolicina, idFood, idRecept, null
     );
 
     return this.unosService.unosId.pipe(
@@ -93,7 +102,7 @@ export class StavkaService {
         );
   }
     
-  editStavka (redniBroj: string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
+  editStavka (redniBroj: string, naziv: string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
     let idDnevnogUnosa;
     return this.unosService.unosId.pipe(
       take(1),
@@ -109,6 +118,7 @@ export class StavkaService {
           {
             idDnevnogUnosa,
             idFood,
+            naziv,
             kalorija,
             kolicina, 
             masti, 
@@ -126,6 +136,7 @@ export class StavkaService {
         const updatedStavke = [...stavke];
         updatedStavke[updatedStavkaIndex] = new Stavka(
           redniBroj,
+          naziv,
           kalorija,
           masti, 
           proteina,

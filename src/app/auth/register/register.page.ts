@@ -4,6 +4,8 @@ import {AuthService} from '../auth.service';
 import {AlertController, LoadingController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import { UserService } from 'src/app/user.service';
+import { DnevniUnosService } from 'src/app/unos/dnevni-unos.service';
+import { formatDate } from '@angular/common';
 
 
 @Component({
@@ -13,9 +15,10 @@ import { UserService } from 'src/app/user.service';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
+  idKorisnika=null;
 
   constructor(private authService: AuthService, private loadingCtrl: LoadingController, private router: Router,
-    private alertCtrl: AlertController, private us:UserService) {
+    private alertCtrl: AlertController, private us:UserService, private unosService:DnevniUnosService) {
   }
 
   ngOnInit() {
@@ -25,6 +28,13 @@ export class RegisterPage implements OnInit {
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, [Validators.required, Validators.minLength(7)]),
     });
+
+    this.authService.user.subscribe((user)=>{
+      if(user!=null){
+        this.idKorisnika=user.id;
+        console.log(user);
+      }
+    })
   }
 
 
@@ -45,8 +55,9 @@ export class RegisterPage implements OnInit {
             this.registerForm.value.surname,
             this.registerForm.value.email).subscribe((users) => {
               });
+          
+          this.postaviUnos();
 
-          this.router.navigateByUrl('/unos');
         },errRes => {
           console.log(errRes);
           loadingEl.dismiss();
@@ -74,5 +85,35 @@ export class RegisterPage implements OnInit {
 
   }
 
-
+  postaviUnos(){
+    let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+    if(this.idKorisnika!=null){
+      this.unosService.getDnevniUnosi().subscribe((unosi) => {
+      
+        var noviRegistrovaniKorisnik=false;
+        for(const u in unosi){
+          if(unosi[u].idKorisnik===this.idKorisnika){
+            if(danasnjiDatum === unosi[u].datum){
+              console.log('Postavljen unos');
+              this.unosService.setDnevniUnos(unosi[u]);
+              this.router.navigateByUrl('/unos');
+            }else{
+              this.unosService.addDnevniUnos().subscribe((unos) => {
+                  //await this.delay(5000);
+                console.log('Dodat novi unos')
+                this.router.navigateByUrl('/unos');
+              });
+            }
+              noviRegistrovaniKorisnik=true;
+          }
+        }
+        if(!noviRegistrovaniKorisnik){
+          this.unosService.addDnevniUnos().subscribe((unos) => {
+            console.log('Dodat novi unos za novog korisnika');
+            this.router.navigateByUrl('/unos');
+          });
+        }
+      })
+    }
+  }
 }
