@@ -79,7 +79,7 @@ export class UnosPage implements OnInit {
   }
 
   ionViewDidLeave(){
-    this.unosService.editDnevniUnos(this.unos.id, this.idKorisnika, this.unos.datum, this.ukupnoKalorija).subscribe(
+    this.unosService.editDnevniUnos(this.unos.id, this.unos.datum, this.ukupnoKalorija).subscribe(
       ()=>{ console.log('Unos izmenjen') });
       
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
@@ -111,7 +111,7 @@ export class UnosPage implements OnInit {
           stavka.idFood, stavka.idRecept).subscribe((stavke)=>{
 
             this.izracunajUkupnoKalorija(stavke);
-            
+
           })
 
         

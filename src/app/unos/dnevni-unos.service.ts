@@ -98,8 +98,14 @@ export class DnevniUnosService {
 
   }
 
-  editDnevniUnos(id:string, idKorisnik:string, datum:string, ukupnoKalorija:number){
-    return this.authService.token.pipe(
+  editDnevniUnos(id:string,  datum:string, ukupnoKalorija:number){
+    let idKorisnik;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap((id)=>{
+        idKorisnik = id;
+        return this.authService.token;
+      }),
       take(1),
       switchMap((token) => {
         return this.http.put(
