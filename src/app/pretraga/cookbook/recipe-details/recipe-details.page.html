@@ -8,25 +8,29 @@
   <div class="ion-text-center" *ngIf="isLoading">
     <ion-spinner color="primary"></ion-spinner>
   </div>
+  <form #RecipeForm="ngForm" >
   <ion-item *ngIf="!isLoading">
     <ion-label position="floating">Naziv: </ion-label>
     <ion-input
-    name="nazivRecepta" 
+    ngModel name="nazivRecepta" 
     type="text" 
-    [(ngModel)]="naziv"></ion-input>
+    [(ngModel)]="naziv"
+    required #nazivRecepta="ngModel"></ion-input>
   </ion-item>
   <ion-item *ngIf="!isLoading">
     <ion-label position="floating">Opis: </ion-label>
     <ion-textarea
-    name="nazivRecepta" 
+    ngModel name="opisRecepta" 
     type="text" 
-    [(ngModel)]="opis"></ion-textarea>
+    [(ngModel)]="opis"
+    required #opisRecepta="ngModel"></ion-textarea>
   </ion-item>
 
-  <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" (click)="onDodaj()">
+
+  <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" [disabled]='RecipeForm.invalid' (click)="onDodaj()">
     {{buttonText}}
   </ion-button>
-
+</form>
   <ion-grid *ngIf="!isLoading">
     <ion-row >
       <ion-col>
