@@ -47,8 +47,6 @@ export class UnosPage implements OnInit {
   }
 
   ionViewWillEnter(){
-    //svaki put kad se udje na stranicu ponovo ucitava stavke za danasnji unos
-    //umesto preko id-a pretrazivati i preko datuma nekako
     console.log('get stavke');
     this.isLoading = true;
     if(this.unos!=null){
@@ -69,6 +67,7 @@ export class UnosPage implements OnInit {
      for(const i in stavke){
        this.ukupnoKalorija+=stavke[i].kalorija;
      }
+     
      
      this.isLoading = false;
   }
