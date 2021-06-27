@@ -101,5 +101,6 @@ export class AuthService {
 
   logOut() {
     this._user.next(null);
+    console.log(this.user);
   }
 }

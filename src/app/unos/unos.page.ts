@@ -25,20 +25,16 @@ export class UnosPage implements OnInit {
   ukupnoKalorija: number = 0;
   isLoading = false;
 
-  constructor(private stavkaService: StavkaService, private pageService: PageModeService, 
-    private foodService:FoodService, private recipeService: RecipesService, private unosService:DnevniUnosService,
-    private nav: NavController, private authService: AuthService, private modalCtrl: ModalController) { 
+  constructor(private stavkaService: StavkaService, private pageService: PageModeService, private unosService:DnevniUnosService,
+     private modalCtrl: ModalController) { 
     
   }
-  delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms))
-  };
 
-  ngOnInit() {
-    
+ ngOnInit() {  
+    console.log('oninit');
     this.unosService.dnevniUnos.subscribe((dnevniUnos) => {
       this.unos = dnevniUnos;
-      
+      console.log(this.unos);
     })
     this.stavkaService.stavkePretraga.subscribe( (stavkePretraga) => {
       this.stavke = stavkePretraga;
@@ -46,15 +42,15 @@ export class UnosPage implements OnInit {
 
   }
 
-  ionViewWillEnter(){
-    console.log('get stavke');
+  ionViewDidEnter(){
+    
     this.isLoading = true;
     if(this.unos!=null){
-      console.log('get stavke');
-      this.stavkaService.getStavke().subscribe((stavke) => {
-        
+    
+      this.stavkaService.getStavke().subscribe((s) => {
+        this.stavke=s;
         console.log('get stavke');
-        this.izracunajUkupnoKalorija(stavke);
+        this.izracunajUkupnoKalorija(s);
       })
     }
     
@@ -67,9 +63,13 @@ export class UnosPage implements OnInit {
      for(const i in stavke){
        this.ukupnoKalorija+=stavke[i].kalorija;
      }
+     if(this.unos!=null){
+      this.unosService.editDnevniUnos(this.unos.id, this.unos.datum, this.ukupnoKalorija).subscribe(
+        ()=>{ console.log('Unos izmenjen') });
+        this.isLoading = false;
+    }
      
      
-     this.isLoading = false;
   }
  
   onFabClick(){
@@ -78,9 +78,7 @@ export class UnosPage implements OnInit {
   }
 
   ionViewDidLeave(){
-    this.unosService.editDnevniUnos(this.unos.id, this.unos.datum, this.ukupnoKalorija).subscribe(
-      ()=>{ console.log('Unos izmenjen') });
-      
+    
     this.pageService.setDodavanjeStavkeUnosaFoodMode(true);
     this.pageService.setDodavanjeStavkiUReceptMode(false); 
   }

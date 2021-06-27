@@ -27,6 +27,7 @@ export class DnevniUnosService {
 
   setDnevniUnos(dnevniUnos: DnevniUnos):void {
     this._dnevniUnos.next(dnevniUnos);
+    console.log(this._dnevniUnos.value);
   }
 
   get unosId() {
@@ -74,7 +75,14 @@ export class DnevniUnosService {
   }
 
   getDnevniUnosi() {
-    return this.authService.token.pipe(
+    let idkorisnika;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap((userID) => {
+        console.log(userID);
+        idkorisnika=userID;
+        return this.authService.token;
+      }),
       take(1),
       switchMap((token) => {
         return this.http
@@ -86,7 +94,7 @@ export class DnevniUnosService {
         console.log(unosData);
         const unosi: DnevniUnos[] = [];
         for (const key in unosData) {
-          if (unosData.hasOwnProperty(key)) {
+          if (unosData.hasOwnProperty(key) && unosData[key].idKorisnik==idkorisnika) {
             unosi.push(new DnevniUnos(key, unosData[key].ukupnoKalorija, formatDate(unosData[key].datum, 'yyyy-MM-dd', 'en-US'), unosData[key].idKorisnik)
             );
           }

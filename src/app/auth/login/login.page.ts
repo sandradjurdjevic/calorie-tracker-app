@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { UserService } from 'src/app/user.service';
 import { DnevniUnosService } from 'src/app/unos/dnevni-unos.service';
 import { formatDate } from '@angular/common';
@@ -13,30 +13,25 @@ import { formatDate } from '@angular/common';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  idKorisnika=null;
+  //idKorisnika=null;
   isLoading = false;
-  constructor(private authService: AuthService, private router: Router,private alertCtrl: AlertController,
+  constructor(private authService: AuthService, private navCtrl: NavController,private alertCtrl: AlertController,
     private us:UserService, private unosService: DnevniUnosService) { }
 
   ngOnInit() {
-    this.authService.user.subscribe((user) => {
-      if(user!=null){
-        this.idKorisnika=user.id;
-        console.log(user);
-      }
-    })
+    console.log('log oninit');
   }
 
   onLogIn(logInForm: NgForm) {
-    this.isLoading = true;
-
-    console.log(logInForm);
+    
+    console.log('Logovanje...');
     if (logInForm.valid) {
+      console.log('Validna forma...');
       this.authService.logIn(logInForm.value).subscribe(resData => {
+        console.log('Pamcenje korisnika...');
           this.isLoading = false;
-
+          console.log(resData);
           this.us.getCurrentUser().subscribe((user)=>{
-            console.log('getUsers')
           });
 
           this.postaviUnos();
@@ -68,38 +63,47 @@ export class LoginPage implements OnInit {
           logInForm.reset();
 
         });
-    }
+      }
+  
+    
   }
 
-  postaviUnos(){
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+async postaviUnos(){
     let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-    if(this.idKorisnika!=null){
+    //if(this.idKorisnika!=null){
+      await this.delay(1000);
       this.unosService.getDnevniUnosi().subscribe((unosi) => {
       
         var noviRegistrovaniKorisnik=false;
         for(const u in unosi){
-          if(unosi[u].idKorisnik===this.idKorisnika){
-            if(danasnjiDatum === unosi[u].datum){
+          if(danasnjiDatum === unosi[u].datum){
               console.log('Postavljen unos');
               this.unosService.setDnevniUnos(unosi[u]);
-              this.router.navigateByUrl('/unos');
+              console.log('Zapamcen unos');
+              //this.router.navigateByUrl('/unos');
             }else{
               this.unosService.addDnevniUnos().subscribe((unos) => {
                   //await this.delay(5000);
                 console.log('Dodat novi unos')
-                this.router.navigateByUrl('/unos');
+                //this.router.navigateByUrl('/unos');
               });
             }
               noviRegistrovaniKorisnik=true;
-          }
+          
         }
         if(!noviRegistrovaniKorisnik){
           this.unosService.addDnevniUnos().subscribe((unos) => {
             console.log('Dodat novi unos za novog korisnika');
-            this.router.navigateByUrl('/unos');
+            //this.router.navigateByUrl('/unos');
           });
         }
+        
+        this.navCtrl.navigateForward('/unos');
       })
-    }
+    //}
   }
 }

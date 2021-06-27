@@ -15,7 +15,6 @@ import { formatDate } from '@angular/common';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
-  idKorisnika=null;
 
   constructor(private authService: AuthService, private loadingCtrl: LoadingController, private router: Router,
     private alertCtrl: AlertController, private us:UserService, private unosService:DnevniUnosService) {
@@ -29,12 +28,6 @@ export class RegisterPage implements OnInit {
       password: new FormControl(null, [Validators.required, Validators.minLength(7)]),
     });
 
-    this.authService.user.subscribe((user)=>{
-      if(user!=null){
-        this.idKorisnika=user.id;
-        console.log(user);
-      }
-    })
   }
 
 
@@ -87,12 +80,12 @@ export class RegisterPage implements OnInit {
 
   postaviUnos(){
     let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-    if(this.idKorisnika!=null){
+    
       this.unosService.getDnevniUnosi().subscribe((unosi) => {
       
         var noviRegistrovaniKorisnik=false;
         for(const u in unosi){
-          if(unosi[u].idKorisnik===this.idKorisnika){
+          
             if(danasnjiDatum === unosi[u].datum){
               console.log('Postavljen unos');
               this.unosService.setDnevniUnos(unosi[u]);
@@ -105,7 +98,7 @@ export class RegisterPage implements OnInit {
               });
             }
               noviRegistrovaniKorisnik=true;
-          }
+          
         }
         if(!noviRegistrovaniKorisnik){
           this.unosService.addDnevniUnos().subscribe((unos) => {
@@ -114,6 +107,6 @@ export class RegisterPage implements OnInit {
           });
         }
       })
-    }
+    
   }
 }
