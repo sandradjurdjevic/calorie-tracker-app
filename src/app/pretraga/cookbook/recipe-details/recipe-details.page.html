@@ -9,6 +9,7 @@
 </ion-header>
 
 <ion-content>
+ <img *ngIf="!newRecipe" class="header-image" [src]= "src" (click)="addPhotoToRecipe()"/>  
   <div class="ion-text-center" *ngIf="isLoading">  
     <ion-spinner color="primary"></ion-spinner>
   </div>
@@ -22,19 +23,17 @@
     required #nazivRecepta="ngModel"></ion-input>
   </ion-item>
   <ion-item *ngIf="!isLoading">
-    <ion-label position="floating">Opis: </ion-label>
+    <ion-label position="floating">Instrukcije </ion-label>
     <ion-textarea
     ngModel name="opisRecepta" 
     type="text" 
-    [(ngModel)]="opis"
+    [(ngModel)]="instrukcije"
     required #opisRecepta="ngModel"></ion-textarea>
   </ion-item>
+ 
 
 
-  <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" [disabled]='RecipeForm.invalid' (click)="onDodaj()">
-    {{buttonText}}
-  </ion-button>
-</form>
+  
   <ion-grid *ngIf="!isLoading">
     <ion-row >
       <ion-col>
@@ -105,5 +104,26 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-item *ngIf="!isLoading">
+    <ion-label>Mode</ion-label>
+    <ion-select #O interface="popover" (ionChange) = "onChangeOfMode(O.value)">
+      <ion-select-option value="Easy">Easy</ion-select-option>
+      <ion-select-option value="Medium">Medium</ion-select-option>
+      <ion-select-option value="Hard">Hard</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item *ngIf="!isLoading">
+    <ion-label position="floating">Vreme </ion-label>
+    <ion-input 
+    ngModel name="vremeRecepta" 
+    type="text" 
+    [(ngModel)]="vreme"
+    required #vremeRecepta="ngModel"></ion-input>
+  </ion-item>
 
+
+  <ion-button *ngIf="!isLoading" expand='block' color="primary" size="default" [disabled]='RecipeForm.invalid' (click)="onDodaj()">
+    {{buttonText}}
+  </ion-button>
+</form>
 </ion-content>

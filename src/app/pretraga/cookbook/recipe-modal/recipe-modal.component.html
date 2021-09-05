@@ -8,6 +8,23 @@
 </ion-header>
 
 <ion-content fullscreen class="ion-padding">
+  <img *ngIf="haveImage" class="header-image" [src]= photo.webviewPath />  
+ <!--<div #img class="header-image" [style.background-image]="'url(image)'"></div>
+--> 
+  <ion-title class="naziv" size = "large" ><b>{{recipe.naziv}}</b></ion-title>
+
+  <ion-row class="center">
+    <ion-chip >
+      <ion-icon name="heart" color="dark"></ion-icon>
+      <ion-label>{{recipe.vreme}} min</ion-label>
+    </ion-chip>
+    <ion-chip >
+      <ion-icon name="heart" color="dark"></ion-icon>
+      <ion-label>{{recipe.mode}}</ion-label>
+    </ion-chip>
+  </ion-row>
+    
+  
   
   <ion-fab horizontal="end" vertical="top" slot="fixed">
     <ion-fab-button >
@@ -18,41 +35,24 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-item >
+<!--<ion-item >
     <ion-label position="floating">Naziv: </ion-label>
     <ion-input
     name="nazivRecepta" 
     type="text" 
     [(ngModel)]="naziv"
     (input)="onChangeOfNazivRecepta($event)"></ion-input>
-  </ion-item>
+  </ion-item>-->
+  <!-- 
   <ion-item>
-    <ion-label position="floating">Opis: </ion-label>
+   <ion-label position="floating">Opis: </ion-label>
     <ion-textarea
     name="nazivRecepta" 
     type="text" 
     [(ngModel)]="opis"
     (input)="onChangeOfOpisRecepta($event)"></ion-textarea>
-  </ion-item>
-  <ion-grid>
-    <ion-row class="ion-align-items-start">
-      <ion-col >
-        <ion-item lines="none">
-          <ion-icon name="calculator-outline"></ion-icon>
-          <ion-input placeholder="Broj porcija" 
-            name="unetaKolicina" 
-            type="text" 
-            (input)="onChangeOfUnetaKolicina($event)"
-            [(ngModel)]="kolicina"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    </ion-grid>
-
-    <ion-button expand="block" color="primary" size="default" (click)="onDodaj()">
-      {{buttonText}}
-    </ion-button>
-    
+  </ion-item>-->
+  
     <ion-grid>
     <ion-row >
       <ion-col>
@@ -117,6 +117,31 @@
     </ion-row>
   </ion-grid>
   
-  
+  <ion-grid>
+    <ion-row class="ion-align-items-start">
+      <ion-col >
+        <ion-item lines="none">
+          <ion-icon name="calculator-outline"></ion-icon>
+          <ion-input placeholder="Broj porcija" 
+            name="unetaKolicina" 
+            type="text" 
+            (input)="onChangeOfUnetaKolicina($event)"
+            [(ngModel)]="kolicina"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label>portions</ion-label>
+          
+        </ion-item>
+
+      </ion-col>
+    </ion-row>
+    </ion-grid>
+
+    <ion-button expand="block" color="primary" size="default" (click)="onDodaj()">
+      {{buttonText}}
+    </ion-button>
+    
   
 </ion-content>

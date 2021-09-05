@@ -8,6 +8,8 @@ import { NavController } from '@ionic/angular';
 import { RecipeFoodItem } from '../food-of-recipe/recipe-food-item.model';
 import { RecipeFoodItemService } from '../food-of-recipe/recipe-food-item.service';
 import { NgForm } from '@angular/forms';
+import { PhotoService } from 'src/app/services/photo.service';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-recipe-details',
@@ -25,18 +27,23 @@ export class RecipeDetailsPage implements OnInit {
   kolicina: string = '1';
   kalorija:number; masti:number; proteina:number; ugljenihHidrata:number;
 
-  naziv: string; opis: string;
+  naziv: string; instrukcije: string; vreme: number; mode:string; 
+
+  photos: Photograph[];
+  photo: Photograph;
+  src: string;
 
   //ngIf promenljive
   karticeNoviRecept: boolean;
   isLoading = false;
+  newRecipe: boolean = true;
 
   constructor(private route:ActivatedRoute,  
     private recipeService: RecipesService, 
     private foodService: FoodService,
     private sastojciService: RecipeFoodItemService,
     private pageService: PageModeService,
-    private nav: NavController) {
+    private nav: NavController, private photoService: PhotoService) {
 
    }
 
@@ -47,7 +54,7 @@ export class RecipeDetailsPage implements OnInit {
         return;
       }
       if (paramMap.get('recipeId')==='0') {
-        this.recipe = new Recipe('','','',0,0,0,0,'');
+        this.recipe = new Recipe('','','',0,'',0,0,0,0,'');
         this.kalorija = 0;
         this.masti = 0;
         this.proteina = 0;
@@ -60,12 +67,9 @@ export class RecipeDetailsPage implements OnInit {
             console.log(recept);
             this.recipe = recept;
             this.isLoading=false;
-            this.kalorija = this.recipe.ukupnoKalorija;
-            this.masti = this.recipe.ukupnoMasti;
-            this.proteina = this.recipe.ukupnoProteina;
-            this.ugljenihHidrata = this.recipe.ukupnoUgljenihHidrata;
-            this.naziv = this.recipe.naziv;
-            this.opis = this.recipe.opis;
+            this.kalorija = this.recipe.ukupnoKalorija; this.masti = this.recipe.ukupnoMasti;this.proteina = this.recipe.ukupnoProteina;this.ugljenihHidrata = this.recipe.ukupnoUgljenihHidrata;
+            this.naziv = this.recipe.naziv; this.instrukcije = this.recipe.instrukcije;
+            this.mode = this.recipe.mode; this.vreme = this.recipe.vreme;
             this.idRecepta = paramMap.get('recipeId');
           }
             
@@ -89,6 +93,10 @@ export class RecipeDetailsPage implements OnInit {
       }else{
         this.sastojci=s;
       }
+      
+      this.src = "https://www.pngkey.com/png/detail/4-44913_plus-sign-clipart-blue-plus-sign.png";
+      this.newRecipe = false;
+
       this.buttonText = "SACUVAJ RECEPT"
       this.izracunajKartice();
     }
@@ -97,18 +105,60 @@ export class RecipeDetailsPage implements OnInit {
         console.log('get sastojci')
         this.izracunajKartice();
       })
-      
       this.buttonText = "IZMENI RECEPT";
+      this.postaviSliku();
     }
     if(this.pageService.getBrisanjeRecepta()){
       this.sastojciService.getRecipeFoodItemsBaza(this.idRecepta).subscribe((items)=>{
         console.log('get sastojci')
         this.izracunajKartice();
       })
-
       this.buttonText = "OBRISI RECEPT";
+      this.postaviSliku();
+    }
+    
+  }
+
+  addPhotoToRecipe(){
+    /*console.log(this.naziv);
+    
+    Camera.getPhoto({
+      
+      resultType: CameraResultType.Uri, // file-based data; provides best performance
+      source: CameraSource.Camera, // automatically take a new photo with the camera
+      quality: 100 // highest quality (0 to 100)
+    }).then((res) => {
+      this.photoService.addNewToGallery(res, this.naziv).then((converted) => {
+        
+        this.src = converted.webviewPath;
+        //this.newRecipe = false;
+        console.log(this.src);
+      }).catch((e) => {
+        console.log(e);
+      })
+      
+    }).catch((e)=>{
+      console.log(e);
+    });*/
+  }
+
+  postaviSliku(){
+    
+   
+
+    for (let p of this.photos) {
+      console.log(p.filepath);
+      if(p.filepath === this.recipe.naziv +'.jpeg'){
+        this.photo = p;
+        this.src = p.webviewPath;
+        this.newRecipe = false;
+      }
       
     }
+  }
+
+  onChangeOfMode(value): void {
+    this.mode = value;
     
   }
 
@@ -150,12 +200,12 @@ export class RecipeDetailsPage implements OnInit {
     this.recipe.ukupnoUgljenihHidrata = this.ugljenihHidrata;
     if(this.pageService.getDodavanjeNovogRecepta()){
 
-      this.recipeService.addRecipe(this.naziv, this.opis, 
+      this.recipeService.addRecipe(this.naziv, this.instrukcije, this.mode, this.vreme, 
         this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
         this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
         console.log('Recept je sacuvan...');
         this.sastojci.forEach(s => {
-          this.sastojciService.addRecipeItemUBazu(s.idFood, s.kolicina).subscribe((item)=>{
+          this.sastojciService.addRecipeItemUBazu(s.idFood, s.kolicina, s.mernaJedinica).subscribe((item)=>{
             console.log('Sastojci su sacuvani...');
           })
         });
@@ -168,7 +218,7 @@ export class RecipeDetailsPage implements OnInit {
     //}
   }
     if(this.pageService.getIzmenaRecepta()){
-      this.recipeService.editRecipe(this.recipe.id, this.naziv, this.opis, 
+      this.recipeService.editRecipe(this.recipe.id, this.naziv, this.instrukcije, this.mode,  this.vreme,
         this.recipe.ukupnoKalorija,this.recipe.ukupnoMasti,this.recipe.ukupnoProteina,
         this.recipe.ukupnoUgljenihHidrata).subscribe((recipes)=>{
         console.log('Recept je izmenjen...');
@@ -190,5 +240,11 @@ export class RecipeDetailsPage implements OnInit {
     }
     
   }
+
   
+  
+}
+export interface Photograph {
+  filepath: string;
+  webviewPath: string;
 }

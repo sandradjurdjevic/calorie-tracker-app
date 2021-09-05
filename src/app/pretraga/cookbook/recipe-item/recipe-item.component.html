@@ -1,4 +1,4 @@
-<ion-grid>
+<!--<ion-grid>
   <ion-row>
     <ion-col>
       <ion-item (click)="onRecipeDetails()">
@@ -8,4 +8,17 @@
       </ion-item>
     </ion-col>
   </ion-row>
-</ion-grid>
+</ion-grid>-->
+  <ion-card class="featured" (click)="onRecipeDetails()">
+    <ion-card-header>
+      <img [src]= image />              
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card-title>
+          {{recipe.naziv}}
+        </ion-card-title>  
+        <ion-card-subtitle color="tertiary">{{recipe.vreme}} min</ion-card-subtitle>
+    </ion-card-content>
+  </ion-card>
+  
+

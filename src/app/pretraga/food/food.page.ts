@@ -29,19 +29,26 @@ export class FoodPage implements OnInit {
     this.foodSub = this.foodService.food.subscribe((food) => {
       this.items = food;
       this.itemsAll = food;
+      food.forEach(item => {
+        console.log(item);
+      });
     });
   }
 
   ionViewWillEnter(){
     this.foodService.getFood().subscribe((items) => {
-      // this.quotes = quotes;
+      items.forEach(item => {
+        console.log(item);
+      });
     });
+    
     this.itemSelected = this.pageService.getItemSelected();
   }
 
   selectItem(item: Food){
     if(this.pageService.getDodavanjeStavkeUnosaFoodMode()){
     console.log('Otvaranje modala za detalje o namirnici...');
+    console.log(item);
     this.modalCtrl
       .create({
         component: ItemDetailsPage,
@@ -54,7 +61,7 @@ export class FoodPage implements OnInit {
       if (resultData.role === 'confirm') {
         console.log(resultData);
 
-        this.stavkaService.addStavka(item.naziv, resultData.data.data.item.kalorije100g,resultData.data.data.item.masti100g,resultData.data.data.item.ugljeniHidrati100g,resultData.data.data.item.proteini100g, resultData.data.data.kolicina,item.id ,null).subscribe((nizStavki)=>{
+        this.stavkaService.addStavka(item.naziv, resultData.data.data.item.kalorije100g,resultData.data.data.item.masti100g,resultData.data.data.item.ugljeniHidrati100g,resultData.data.data.item.proteini100g, resultData.data.data.kolicina, resultData.data.data.mernaJedinica, item.id ,null).subscribe((nizStavki)=>{
           console.log('Stavka dodata u dnevni unos...');
           this.itemSelected = this.pageService.getItemSelected();
         })
@@ -76,12 +83,12 @@ export class FoodPage implements OnInit {
           if (resultData.role === 'confirm') {
             console.log(resultData);
 
-            var recipeItem: RecipeFoodItem = new RecipeFoodItem('',item.id , resultData.data.data.kolicina, this.pageService.getIdRecepta());
+            var recipeItem: RecipeFoodItem = new RecipeFoodItem('',item.id , resultData.data.data.kolicina, resultData.data.data.mernaJedinica, this.pageService.getIdRecepta());
             if(this.pageService.getDodavanjeNovogRecepta()){
               this.receptItemService.addRecipeItemUNiz(recipeItem);
             }
             if(this.pageService.getIzmenaRecepta()){
-              this.receptItemService.editRecipeItemBaza(this.pageService.getIdRecepta(), recipeItem.idFood, recipeItem.kolicina).subscribe((item)=>{
+              this.receptItemService.editRecipeItemBaza(this.pageService.getIdRecepta(), recipeItem.idFood, recipeItem.kolicina, recipeItem.mernaJedinica).subscribe((item)=>{
             }) }
   
             console.log('Stavka dodata u recept...');

@@ -8,11 +8,12 @@ export class Stavka {
     ugljenihHidrata: number;
     proteina: number;
     kolicina: number;
+    mernaJedinica: string;
     idFood: string;
     idRecept: string;
 
     constructor(redniBroj: string, naziv: string, kalorija: number, 
-        masti: number, ugljenihHidrata: number,proteina: number,kolicina: number, 
+        masti: number, ugljenihHidrata: number,proteina: number,kolicina: number, mernaJedinica: string,
         idFood: string, idRecept: string, idDnevnogUnosa: string,){
             this.idDnevnogUnosa= idDnevnogUnosa;
             this.naziv = naziv;
@@ -22,6 +23,7 @@ export class Stavka {
             this.ugljenihHidrata= ugljenihHidrata;
             this.proteina= proteina;
             this.kolicina= kolicina;
+            this.mernaJedinica = mernaJedinica;
             this.idFood= idFood;
             this.idRecept= idRecept;
     }

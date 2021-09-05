@@ -6,6 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { PageModeService } from '../page-mode.service';
 import { RecipesService } from '../pretraga/cookbook/recipe.service';
 import { FoodService } from '../pretraga/food.service';
+import { PhotoService } from '../services/photo.service';
 import { DnevniUnos } from './dnevni-unos.model';
 import { DnevniUnosService } from './dnevni-unos.service';
 import { StavkaModalComponent } from './stavka-modal/stavka-modal.component';
@@ -23,18 +24,20 @@ export class UnosPage implements OnInit {
   stavke: any[];
 
   ukupnoKalorija: number = 0;
+  ukupnoMasti: number = 0;
+  ukupnoProteina: number = 0;
+  ukupnoUH: number = 0;
   isLoading = false;
 
   constructor(private stavkaService: StavkaService, private pageService: PageModeService, private unosService:DnevniUnosService,
-     private modalCtrl: ModalController) { 
+     private modalCtrl: ModalController, private photoService:PhotoService) { 
     
   }
 
  ngOnInit() {  
-    console.log('oninit');
+  //await this.photoService.loadSaved();
     this.unosService.dnevniUnos.subscribe((dnevniUnos) => {
       this.unos = dnevniUnos;
-      console.log(this.unos);
     })
     this.stavkaService.stavkePretraga.subscribe( (stavkePretraga) => {
       this.stavke = stavkePretraga;
@@ -49,19 +52,20 @@ export class UnosPage implements OnInit {
     
       this.stavkaService.getStavke().subscribe((s) => {
         this.stavke=s;
-        console.log('get stavke');
         this.izracunajUkupnoKalorija(s);
       })
     }
-    
+     
     this.pageService.setItemSelected(false);
   }
 
   izracunajUkupnoKalorija(stavke: Stavka[]):void{
     this.ukupnoKalorija=0;
-    console.log(stavke);
      for(const i in stavke){
        this.ukupnoKalorija+=stavke[i].kalorija;
+       this.ukupnoMasti+=stavke[i].masti;
+       this.ukupnoProteina+=stavke[i].proteina;
+       this.ukupnoUH+=stavke[i].ugljenihHidrata;
      }
      if(this.unos!=null){
       this.unosService.editDnevniUnos(this.unos.id, this.unos.datum, this.ukupnoKalorija).subscribe(
@@ -96,7 +100,7 @@ export class UnosPage implements OnInit {
         return modal.onDidDismiss();
       }).then((resultData) => {
       if (resultData.role === 'confirm') {
-        console.log(resultData);
+        
         stavka.kolicina = resultData.data.stavkaData.stavka.kolicina;
         stavka.kalorija = resultData.data.stavkaData.stavka.kalorija;
         stavka.masti = resultData.data.stavkaData.stavka.masti;
@@ -104,7 +108,7 @@ export class UnosPage implements OnInit {
         stavka.proteina = resultData.data.stavkaData.stavka.proteina;
         
         this.stavkaService.editStavka(stavka.redniBroj, stavka.naziv, stavka.kalorija, stavka.masti, 
-          stavka.ugljenihHidrata, stavka.proteina, stavka.kolicina, 
+          stavka.ugljenihHidrata, stavka.proteina, stavka.kolicina, stavka.mernaJedinica,
           stavka.idFood, stavka.idRecept).subscribe((stavke)=>{
 
             this.izracunajUkupnoKalorija(stavke);

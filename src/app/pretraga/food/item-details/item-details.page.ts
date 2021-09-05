@@ -14,6 +14,7 @@ export class ItemDetailsPage implements OnInit {
   @Input() buttonText: string;
 
   kolicina:string = '1';
+  mernaJedinica: string = '';
   kalorija: number; masti:number; proteina:number; ugljenihHidrata:number;
 
   isLoading = false;
@@ -27,8 +28,15 @@ export class ItemDetailsPage implements OnInit {
     this.masti = this.item.masti100g;
     this.proteina = this.item.proteini100g;
     this.ugljenihHidrata = this.item.ugljeniHidrati100g;
+    console.log(this.kalorija , this.masti , this.proteina , this.ugljenihHidrata);
   }
   ionViewWillEnter(){
+    
+  }
+
+  onChangeOfUnit(value): void {
+    this.mernaJedinica = value;
+    console.log(this.mernaJedinica);
     
   }
 
@@ -40,8 +48,6 @@ export class ItemDetailsPage implements OnInit {
         this.ugljenihHidrata= (+this.kolicina*this.item.ugljeniHidrati100g);
         this.proteina= (+this.kolicina*this.item.proteini100g);
       }
-      
-    
     
   }
 
@@ -55,7 +61,8 @@ export class ItemDetailsPage implements OnInit {
       {
         data: {
           item: this.item,
-          kolicina: +this.kolicina
+          kolicina: +this.kolicina,
+          mernaJedinica: this.mernaJedinica
         }
       },
       'confirm'

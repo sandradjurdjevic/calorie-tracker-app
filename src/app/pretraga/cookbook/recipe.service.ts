@@ -8,7 +8,10 @@ import { Recipe } from './recipe.model';
 interface RecipeData {
   id: string;
   naziv: string;
-  opis: string;
+  instrukcije: string,
+  vreme: number,
+  mode: string,
+  photo: string;
   ukupnoKalorija: number;
   ukupnoMasti: number;
   ukupnoProteina: number;
@@ -54,7 +57,9 @@ export class RecipesService {
           return new Recipe(
             id,
             resData.naziv,
-            resData.opis,
+            resData.instrukcije,
+            resData.vreme,
+            resData.mode,
             resData.ukupnoKalorija,
             resData.ukupnoMasti,
             resData.ukupnoProteina,
@@ -69,7 +74,7 @@ export class RecipesService {
     );
   }
 
-  addRecipe(naziv:string,opis:string,ukupnoKalorija:number,ukupnoMasti:number,
+  addRecipe(naziv:string,instrukcije:string,mode:string,vreme:number,ukupnoKalorija:number,ukupnoMasti:number,
     ukupnoProteina:number,ukupnoUgljenihHidrata:number){
     let generatedId;
     let newRecipe: Recipe;
@@ -86,7 +91,9 @@ export class RecipesService {
         newRecipe = new Recipe(
           null,
           naziv,
-          opis,
+          instrukcije,
+          vreme,
+          mode,
           ukupnoKalorija,
           ukupnoMasti,
           ukupnoProteina,
@@ -130,7 +137,8 @@ export class RecipesService {
         const recipes: Recipe[] = [];
         for (const key in resData) {
           if (resData.hasOwnProperty(key) && resData[key].idKorisnik==userId) {
-            recipes.push(new Recipe(key, resData[key].naziv, resData[key].opis,
+            recipes.push(new Recipe(key, resData[key].naziv, resData[key].instrukcije,
+              resData[key].vreme,resData[key].mode,
               resData[key].ukupnoKalorija, resData[key].ukupnoMasti,
               resData[key].ukupnoProteina,resData[key].ukupnoUgljenihHidrata,
               resData[key].idKorisnik)
@@ -150,7 +158,8 @@ export class RecipesService {
   }
 
   editRecipe(
-    id: string,naziv: string,opis: string,ukupnoKalorija: number,ukupnoMasti:number,ukupnoProteina:number,ukupnoUgljenihHidrata:number) {
+    id: string,naziv: string, instrukcije: string, mode: string,  vreme: number,
+    ukupnoKalorija: number, ukupnoMasti:number ,ukupnoProteina:number, ukupnoUgljenihHidrata:number) {
     var idKorisnik;
     return this.authService.userId.pipe(
       take(1),
@@ -163,13 +172,15 @@ export class RecipesService {
           return this.http.put(
             `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/recipes/${id}.json?auth=${token}`,
             {
+              idKorisnik,
+              instrukcije,
+              mode,
               naziv,
-              opis,
               ukupnoKalorija,
               ukupnoMasti,
               ukupnoProteina,
               ukupnoUgljenihHidrata,
-              idKorisnik
+              vreme
             }
           );
         }),
@@ -183,7 +194,9 @@ export class RecipesService {
           updatedRecipes[updatedRecipeIndex] = new Recipe(
             id,
             naziv,
-            opis,
+            instrukcije,
+            vreme,
+            mode,
             ukupnoKalorija,
             ukupnoMasti,
             ukupnoProteina,

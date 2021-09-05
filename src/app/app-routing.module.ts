@@ -41,7 +41,12 @@ const routes: Routes = [
     path: 'izvestaj',
     loadChildren: () => import('./izvestaj/izvestaj.module').then( m => m.IzvestajPageModule),
     canLoad: [AuthGuard]
+  },
+  {
+    path: 'photo',
+    loadChildren: () => import('./photo/photo.module').then( m => m.PhotoPageModule)
   }
+
 
 
 

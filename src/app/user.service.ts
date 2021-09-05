@@ -30,6 +30,12 @@ export class UserService {
     
   }
 
+  setUser(){
+    this.getCurrentUser().subscribe(user => {
+
+    });
+  }
+
   addUser(id: string, name: string, lastaname: string, email: string) {
    let generatedId;
     
@@ -55,48 +61,41 @@ export class UserService {
               this._user.next(newUser);
             }));//ovde fali auth=${token} posle ? kada sredim uslov za bazu
       
+  }
+
+
+  getCurrentUser() {
+    var fetchedUserId;
+    return this.authService.userId.pipe(
+    take(1),
+    switchMap(userId => {
+      fetchedUserId = userId;
+      return this.authService.token;
+    }),
+    take(1),
+    switchMap((token) => {
+      return this.http.get<{ [key: string]: UserData }>(`https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/users.json?auth=${token}`);
+    }),
+    map((UserData: any) => {
+      var trazeniuser: User = new User('','','','','') ;
+      const users: User[] = [];
+      for (const key in UserData) {
+        if (UserData.hasOwnProperty(key)) {
+          users.push(new User(UserData[key].id, UserData[key].name, UserData[key].lastname, UserData[key].email, key));
         }
-
-
-        getCurrentUser() {
-          var fetchedUserId;
-          return this.authService.userId.pipe(
-            take(1),
-            switchMap(userId => {
-            fetchedUserId = userId;
-            return this.authService.token;
-          }),
-          take(1),
-          switchMap((token) => {
-              return this.http
-                .get<{ [key: string]: UserData }>(
-                  `https://calorie-tracker-6147b-default-rtdb.europe-west1.firebasedatabase.app/users.json?auth=${token}`
-                );
-            }),
-            map((UserData: any) => {
-              var trazeniuser: User = new User('','','','','') ;
-              const users: User[] = [];
-              for (const key in UserData) {
-                if (UserData.hasOwnProperty(key)) {
-                  users.push(new User(UserData[key].id, UserData[key].name, UserData[key].lastname, UserData[key].email, key)
-                  );
-                }
-              }
-              console.log(users);
-              for(const i in users){
-                if(users[i].id===fetchedUserId){
-                  trazeniuser.id = users[i].id;
-                  trazeniuser.email = users[i].email;
-                  trazeniuser.name = users[i].name;trazeniuser.lastname = users[i].lastname;trazeniuser.key = users[i].key;
-                }
-              }
-              console.log(trazeniuser);
-              this._user.next(trazeniuser);
-              return trazeniuser;
-            })
-          );
+      }
+      for(const i in users){
+        if(users[i].id===fetchedUserId){
+          trazeniuser.id = users[i].id;
+          trazeniuser.email = users[i].email;
+          trazeniuser.name = users[i].name;trazeniuser.lastname = users[i].lastname;trazeniuser.key = users[i].key;
+        }
+      }
+      this._user.next(trazeniuser);
+    })
+  );
       
-        }
+}
 
 
 

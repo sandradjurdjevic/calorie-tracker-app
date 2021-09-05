@@ -19,20 +19,19 @@ export class LoginPage implements OnInit {
     private us:UserService, private unosService: DnevniUnosService) { }
 
   ngOnInit() {
-    console.log('log oninit');
   }
 
   onLogIn(logInForm: NgForm) {
     
     console.log('Logovanje...');
     if (logInForm.valid) {
-      console.log('Validna forma...');
+      //console.log('Validna forma...');
       this.authService.logIn(logInForm.value).subscribe(resData => {
         console.log('Pamcenje korisnika...');
           this.isLoading = false;
           console.log(resData);
-          this.us.getCurrentUser().subscribe((user)=>{
-          });
+
+          this.us.setUser();
 
           this.postaviUnos();
 
@@ -68,32 +67,31 @@ export class LoginPage implements OnInit {
     
   }
 
-  delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-}
 
-async postaviUnos(){
+postaviUnos(){
     let danasnjiDatum =formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+    
     //if(this.idKorisnika!=null){
-      await this.delay(1000);
       this.unosService.getDnevniUnosi().subscribe((unosi) => {
       
         var noviRegistrovaniKorisnik=false;
+        var postoji = false;
         for(const u in unosi){
           if(danasnjiDatum === unosi[u].datum){
               console.log('Postavljen unos');
               this.unosService.setDnevniUnos(unosi[u]);
               console.log('Zapamcen unos');
+              postoji = true;
               //this.router.navigateByUrl('/unos');
-            }else{
-              this.unosService.addDnevniUnos().subscribe((unos) => {
-                  //await this.delay(5000);
-                console.log('Dodat novi unos')
-                //this.router.navigateByUrl('/unos');
-              });
             }
               noviRegistrovaniKorisnik=true;
-          
+        }
+        if(!postoji){
+          this.unosService.addDnevniUnos().subscribe((unos) => {
+              //await this.delay(5000);
+            console.log('Dodat novi unos')
+            //this.router.navigateByUrl('/unos');
+          });
         }
         if(!noviRegistrovaniKorisnik){
           this.unosService.addDnevniUnos().subscribe((unos) => {

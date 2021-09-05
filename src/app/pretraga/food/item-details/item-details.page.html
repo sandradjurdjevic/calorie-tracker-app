@@ -37,6 +37,19 @@
             [(ngModel)]="kolicina"></ion-input>
         </ion-item>
       </ion-col>
+        <ion-col>
+        <ion-item>
+          <ion-label>Unit</ion-label>
+          <ion-select #O interface="popover" (ionChange) = "onChangeOfUnit(O.value)">
+            <ion-select-option value="mg">mg</ion-select-option>
+            <ion-select-option value="g">g</ion-select-option>
+            <ion-select-option value="ml">ml</ion-select-option>
+            <ion-select-option value="dl">dl</ion-select-option>
+            <ion-select-option value="l">l</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+      </ion-col>
     </ion-row>
     </ion-grid>
 

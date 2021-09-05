@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
 import { PageModeService } from 'src/app/page-mode.service';
+import { PhotoService } from 'src/app/services/photo.service';
 import { RecipeFoodItem } from '../food-of-recipe/recipe-food-item.model';
 import { RecipeFoodItemService } from '../food-of-recipe/recipe-food-item.service';
 import { Recipe } from '../recipe.model';
@@ -16,15 +17,19 @@ export class RecipeModalComponent implements OnInit {
   @Input() buttonText: string;
 
   kolicina: string; kalorija: number; masti: number; ugljenihHidrata: number; proteina:number;
-  naziv: string; opis: string;
+  
   sastojci: RecipeFoodItem[];
 
-  constructor(private modalCtrl: ModalController, private navCtrl:NavController, private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
+  haveImage: boolean = false;  
+  photo: Photograph;
+  photos: Photograph[];
+  //image: string = 'https://previews.123rf.com/images/davizro/davizro1811/davizro181100047/115549900-tablet-with-online-recipes-app-and-pastry-ingredients-background-use-of-the-digital-devices-to-cook-.jpg';
+
+  constructor(private photoService:PhotoService, private modalCtrl: ModalController, private navCtrl:NavController, private sastojciService: RecipeFoodItemService, private pageService: PageModeService) { }
 
   ngOnInit() {
     console.log(this.recipe.naziv);
     
-      this.naziv = this.recipe.naziv; this.opis=this.recipe.opis;
       this.kalorija= this.recipe.ukupnoKalorija; this.masti= this.recipe.ukupnoMasti; this.ugljenihHidrata= this.recipe.ukupnoUgljenihHidrata; this.proteina= this.recipe.ukupnoProteina; 
       this.sastojciService.recipeItems.subscribe((items)=>{
         this.sastojci = items;
@@ -38,7 +43,23 @@ export class RecipeModalComponent implements OnInit {
     this.sastojciService.getRecipeFoodItemsBaza(this.recipe.id).subscribe((items)=>{
       console.log('get sastojci')
     })
+    //this.postaviSliku();
   }
+/*
+  async postaviSliku(){
+    await this.photoService.loadSaved();
+
+    this.photos = this.photoService.getPhotos();
+
+    for (let p of this.photos) {
+      
+      if(p.filepath === this.recipe.naziv +'.jpeg'){
+        this.photo = p;
+        this.haveImage = true;
+      }
+      
+    }
+  }*/
 
   onClose() {
     this.modalCtrl.dismiss();
@@ -58,6 +79,7 @@ export class RecipeModalComponent implements OnInit {
     this.navCtrl.navigateForward(`/pretraga/tabs/cookbook/${this.recipe.id}`);
     this.modalCtrl.dismiss();
   }
+
 
   onChangeOfUnetaKolicina(event: Event){
     this.kolicina = (event.target as HTMLInputElement).value;
@@ -91,4 +113,9 @@ export class RecipeModalComponent implements OnInit {
   }
 
 
+}
+
+export interface Photograph {
+  filepath: string;
+  webviewPath: string;
 }

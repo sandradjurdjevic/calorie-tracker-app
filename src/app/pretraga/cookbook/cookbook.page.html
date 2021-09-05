@@ -18,8 +18,10 @@
     <ion-label>Vasi recepti</ion-label>
   </ion-item>
 
-  <ion-list *ngIf="!isLoading">
-    <app-recipe-item *ngFor="let recipe of recipes" [recipe]="recipe"></app-recipe-item>
+  <ion-list class="recipe-list" *ngIf="!isLoading" >
+    
+        <app-recipe-item *ngFor="let recipe of recipes" [recipe]="recipe"></app-recipe-item>
+      
   </ion-list>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!isLoading">

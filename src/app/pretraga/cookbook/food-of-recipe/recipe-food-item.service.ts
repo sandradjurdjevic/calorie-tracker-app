@@ -43,9 +43,9 @@ export class RecipeFoodItemService {
     this.recipeFoodIitems.push(recipeFoodIitem);
   }
 
-  addRecipeItemUBazu(idFood: string, kolicina: number){
+  addRecipeItemUBazu(idFood: string, kolicina: number, mernaJedinica: string){
     let idRecept;
-    let newRecipeItem: RecipeFoodItem = new RecipeFoodItem(null, idFood, kolicina, null
+    let newRecipeItem: RecipeFoodItem = new RecipeFoodItem(null, idFood, kolicina, mernaJedinica, null
     );
 
     return this.recipeService.recipeId.pipe(
@@ -88,7 +88,7 @@ export class RecipeFoodItemService {
         const trazeni: RecipeFoodItem[] = [];
         for (const key in sastojci) {
           if (sastojci.hasOwnProperty(key) && sastojci[key].idRecept==idRecepta) {
-            trazeni.push(new RecipeFoodItem(key, sastojci[key].idFood, sastojci[key].kolicina, sastojci[key].idRecept)
+            trazeni.push(new RecipeFoodItem(key, sastojci[key].idFood, sastojci[key].kolicina, sastojci[key].mernaJedinica, sastojci[key].idRecept)
             );
           }
         }
@@ -120,8 +120,8 @@ export class RecipeFoodItemService {
     );
   }
 
-  editRecipeItemBaza(idRecepta: string, idFood: string, kolicina: number){
-    let newRecipeItem: RecipeFoodItem = new RecipeFoodItem(null, idFood, kolicina, idRecepta
+  editRecipeItemBaza(idRecepta: string, idFood: string, kolicina: number, mernaJedinica: string){
+    let newRecipeItem: RecipeFoodItem = new RecipeFoodItem(null, idFood, kolicina, mernaJedinica, idRecepta
     );
 
     return this.authService.token.pipe(

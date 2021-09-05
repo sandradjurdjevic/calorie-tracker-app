@@ -1,2 +1,9 @@
-ion-header {
+ion-content {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  .recipe-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+  }
 }

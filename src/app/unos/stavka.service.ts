@@ -51,7 +51,7 @@ export class StavkaService {
         const sveStavke: Stavka[] = [];
         for (const key in stavke) {
           if (stavke.hasOwnProperty(key) && stavke[key].idDnevnogUnosa==dnevniUnosID) {
-            sveStavke.push(new Stavka(key, stavke[key].naziv, stavke[key].kalorija, stavke[key].masti, stavke[key].ugljenihHidrata, stavke[key].proteina, stavke[key].kolicina, stavke[key].idFood, stavke[key].idRecept, stavke[key].idDnevnogUnosa)
+            sveStavke.push(new Stavka(key, stavke[key].naziv, stavke[key].kalorija, stavke[key].masti, stavke[key].ugljenihHidrata, stavke[key].proteina, stavke[key].kolicina, stavke[key].mernaJedinica, stavke[key].idFood, stavke[key].idRecept, stavke[key].idDnevnogUnosa)
             );
           }
         }
@@ -67,13 +67,13 @@ export class StavkaService {
     )
   }
 
-  addStavka (naziv:string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
+  addStavka (naziv:string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, mernaJedinica:string, idFood:string, idRecept:string) {
     let idDnevnogUnosa;
     /*this.unosService.dnevniUnos.subscribe((unos)=>{
-      idDnevnogUnosa = unos.id;
+      idDnevnogUnosa = unos.id; 
     })*/
     let newStavka: Stavka = new Stavka(
-      null, naziv, kalorija, masti, ugljenihHidrata, proteina, kolicina, idFood, idRecept, null
+      null, naziv, kalorija, masti, ugljenihHidrata, proteina, kolicina, mernaJedinica, idFood, idRecept, null
     );
 
     return this.unosService.unosId.pipe(
@@ -102,7 +102,7 @@ export class StavkaService {
         );
   }
     
-  editStavka (redniBroj: string, naziv: string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, idFood:string, idRecept:string) {
+  editStavka (redniBroj: string, naziv: string, kalorija:number, masti:number, ugljenihHidrata:number, proteina:number, kolicina:number, mernaJedinica:string, idFood:string, idRecept:string) {
     let idDnevnogUnosa;
     return this.unosService.unosId.pipe(
       take(1),
@@ -122,6 +122,7 @@ export class StavkaService {
             kalorija,
             kolicina, 
             masti, 
+            mernaJedinica,
             proteina,
             ugljenihHidrata
           }
@@ -142,6 +143,7 @@ export class StavkaService {
           proteina,
           ugljenihHidrata,
           kolicina, 
+          mernaJedinica,
           idFood,
           idRecept,
           idDnevnogUnosa,

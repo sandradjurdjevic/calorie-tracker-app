@@ -15,6 +15,8 @@ export class RecipeItemComponent implements OnInit {
   kolicina: string;
   recipeStavka: Recipe;
   
+  image: string = 'https://previews.123rf.com/images/davizro/davizro1811/davizro181100047/115549900-tablet-with-online-recipes-app-and-pastry-ingredients-background-use-of-the-digital-devices-to-cook-.jpg';
+
   constructor(private modalCtrl: ModalController, private nav: NavController,private stavkaService: StavkaService) { }
 
   ngOnInit() {}
@@ -34,11 +36,10 @@ export class RecipeItemComponent implements OnInit {
         console.log(resultData);
         this.kolicina =  resultData.data.recipeData.kolicina;
         this.recipeStavka =  resultData.data.recipeData.recipe;
-
         
         this.stavkaService.addStavka(this.recipe.naziv ,this.recipeStavka.ukupnoKalorija, this.recipeStavka.ukupnoMasti,
         this.recipeStavka.ukupnoUgljenihHidrata,
-        this.recipeStavka.ukupnoProteina, +this.kolicina,
+        this.recipeStavka.ukupnoProteina, +this.kolicina, "serv",
         null, this.recipe.id).subscribe((stavke) => {
           console.log('Stavka dodata u dnevni unos...');
           this.nav.navigateForward('/unos');

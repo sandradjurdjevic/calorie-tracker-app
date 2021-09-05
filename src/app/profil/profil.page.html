@@ -10,7 +10,7 @@
   
 
   <ion-content padding-class="background" [fullscreen]="true">
-	<form profileForm="ngForm" > <!--ng subnmit je ovde bio-->
+	<form profileForm="ngForm" *ngIf="isLoading"> <!--ng subnmit je ovde bio-->
 	  <ion-grid>
 		<ion-row>
 		  <ion-col size-sm="6" offset-sm="3">
@@ -18,20 +18,20 @@
 			  <ion-item>
 				<ion-label >Ime:</ion-label>
 				<p></p>
-				<ion-label >{{Ime}}</ion-label>
+				<ion-label >{{user.name}}</ion-label>
 			  </ion-item>
   
   
 			  <ion-item>
 				<ion-label>Prezime:</ion-label>
 				<p></p>
-				<ion-label >{{Prezime}}</ion-label>
+				<ion-label >{{user.lastname}}</ion-label>
 			  </ion-item>
 
 			  <ion-item>
 				<ion-label >Email:</ion-label>
 				<p></p>
-				<ion-label >{{Email}}</ion-label>
+				<ion-label >{{user.email}}</ion-label>
 			  </ion-item>
   
 			 
@@ -43,6 +43,17 @@
 		
 	  </ion-grid>
 	</form>
+
+	
+	<ion-img *ngIf="haveImage" [src]="src"></ion-img>
+		  
+	
+	<ion-fab vertical="bottom" horizontal="center" slot="fixed">
+	
+		<ion-fab-button  (click)="addPhotoToGallery()">
+		  <ion-icon name="camera"></ion-icon>
+		</ion-fab-button>
+	  </ion-fab>
   
   
   </ion-content>
